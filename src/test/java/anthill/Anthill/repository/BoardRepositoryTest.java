@@ -63,7 +63,7 @@ class BoardRepositoryTest {
         boardRepository.save(board);
 
         //when
-        board.updateBoard("changed", "changed");
+        board.changeInfo("changed", "changed");
 
         //then
         Assertions.assertThat(board.getMember()

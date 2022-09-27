@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "board")
 @Entity
@@ -28,6 +29,7 @@ public class Board {
     private String content;
 
     @Column(name = "writer", nullable = false, length = 20)
+    @NotNull
     private String writer;
 
     @Column(name = "hits")
@@ -55,11 +57,6 @@ public class Board {
         this.member = member;
         member.getBoards()
               .add(this);
-    }
-
-    public void updateBoard(String title, String content) {
-        this.title = title;
-        this.content = content;
     }
 
     public void deleteMember() {
