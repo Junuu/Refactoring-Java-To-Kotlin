@@ -24,7 +24,7 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
 
     @Override
-    public void posting(BoardRequestDTO boardRequestDTO) {
+    public Long posting(BoardRequestDTO boardRequestDTO) {
         Member member = memberRepository.findById(boardRequestDTO.getMemberId())
                                         .orElseThrow(() -> new IllegalArgumentException());
         Board board = Board.builder()
@@ -35,7 +35,7 @@ public class BoardServiceImpl implements BoardService {
                            .hits(0L)
                            .build();
 
-        boardRepository.save(board);
+        return boardRepository.save(board).getId();
     }
 
     @Override

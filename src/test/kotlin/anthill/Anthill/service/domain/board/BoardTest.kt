@@ -1,6 +1,5 @@
-package db.domain.board
+package anthill.Anthill.service.domain.board
 
-import makeBoard
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -8,7 +7,7 @@ class BoardTest {
 
     @Test
     fun `게시글은 id,제목,내용,작성자,조회수,작성자아이디를 가진다`() {
-        val board = makeBoard()
+        val board = TestFixture.makeBoard()
 
         Assertions.assertEquals(board.id, 1L)
         Assertions.assertEquals(board.content, "myContent")
@@ -19,7 +18,7 @@ class BoardTest {
 
     @Test
     fun `게시글의 제목와 내용을 변경할 수 있다`() {
-        val board = makeBoard()
+        val board = TestFixture.makeBoard()
         val changedTitle = "changedTitle"
         val changedContent = "changedContent"
 

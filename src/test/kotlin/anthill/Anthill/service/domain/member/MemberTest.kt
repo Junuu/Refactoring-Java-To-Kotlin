@@ -1,13 +1,13 @@
-package db.domain.member
+package anthill.Anthill.service.domain.member
 
-import makeMember
+import TestFixture
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class MemberTest {
     @Test
     fun `회원은 id,userId,password,nickName,name을 가진다`(){
-        val member = makeMember()
+        val member = TestFixture.makeMember()
 
         Assertions.assertEquals(member.id, 1L)
         Assertions.assertEquals(member.userId, "userId")
@@ -18,7 +18,7 @@ class MemberTest {
 
     @Test
     fun `회원은 nickName을 변경할 수 있다`(){
-        val member = makeMember()
+        val member = TestFixture.makeMember()
         val changedNickName = "changedNickName"
 
         member.changeNickName(changedNickName)

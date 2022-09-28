@@ -4,7 +4,7 @@ import anthill.Anthill.api.dto.board.*;
 import org.apache.tomcat.websocket.AuthenticationException;
 
 public interface BoardService {
-    void posting(BoardRequestDTO boardRequestDTO);
+    Long posting(BoardRequestDTO boardRequestDTO);
 
     void changeInfo(BoardUpdateDTO boardUpdateDTO) throws AuthenticationException;
 
