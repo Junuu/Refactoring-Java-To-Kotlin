@@ -35,7 +35,8 @@ public class BoardServiceImpl implements BoardService {
                            .hits(0L)
                            .build();
 
-        return boardRepository.save(board).getId();
+        return boardRepository.save(board)
+                              .getId();
     }
 
     @Override
@@ -43,7 +44,8 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(boardUpdateDTO.getId())
                                      .orElseThrow(() -> new IllegalArgumentException());
 
-        if (board.getWriter() != boardUpdateDTO.getWriter()) {
+        if (board.getMember()
+                 .getId() != boardUpdateDTO.getMemberId()) {
             throw new AuthenticationException("권한 없음");
         }
         board.changeInfo(boardUpdateDTO.getTitle(), boardUpdateDTO.getContent());
@@ -54,7 +56,7 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(boardDeleteDto.getId())
                                      .orElseThrow(() -> new IllegalArgumentException());
 
-        if (board.getWriter() != boardDeleteDto.getWriter()) {
+        if (board.getMember().getId() != boardDeleteDto.getMemberId()) {
             throw new AuthenticationException("권한 없음");
         }
 
