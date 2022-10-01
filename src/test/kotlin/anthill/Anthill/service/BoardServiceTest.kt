@@ -6,6 +6,10 @@ import anthill.Anthill.api.service.BoardServiceImpl
 import anthill.Anthill.db.domain.member.Member
 import anthill.Anthill.db.repository.BoardRepository
 import anthill.Anthill.db.repository.MemberRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.apache.tomcat.websocket.AuthenticationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -14,8 +18,11 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
+import kotlin.system.measureTimeMillis
 
 
 @DataJpaTest
@@ -170,15 +177,107 @@ class BoardServiceTest @Autowired constructor(
     }
 
     @ParameterizedTest
-    @ValueSource(ints = [-100,-1])
-    fun `0보다 큰 페이지 index를 넣어주지 않으면 IllegalArgumentException 발생`(input: Int){
+    @ValueSource(ints = [-100, -1, 100])
+    fun `음수 또는 페이지 크기보다 큰 index를 넣으면 IllegalArgumentException 발생`(input: Int) {
+        val savedMemberId = saveMember()
+        boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             boardService.paging(input)
         }
     }
 
+    @Test
+    fun `0~페이지 크기보다 작은 범위의 index를 넣으면 페이징 조회에 성공한다`(){
+        val savedMemberId = saveMember()
+        repeat(43){
+            boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        }
 
+        val firstPaging = boardService.paging(0)
+        val lastPaging = boardService.paging(4)
 
+        Assertions.assertEquals(10,firstPaging.contents.size)
+        Assertions.assertEquals(3,lastPaging.contents.size)
+    }
+
+    @Test
+    fun `페이지된 상세페이지를 조회할 수 있다`(){
+        val savedMemberId = saveMember()
+        boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val userInputTitle = "userInputTitle"
+
+        val pagingResult = boardService.paging(0)
+
+        Assertions.assertEquals(pagingResult.size, 10)
+        Assertions.assertEquals(pagingResult.totalPage, 1)
+        Assertions.assertEquals(pagingResult.totalElements, 1)
+        Assertions.assertEquals(pagingResult.curPage, 0)
+        Assertions.assertEquals(pagingResult.contents.size, 1)
+        Assertions.assertEquals(pagingResult.contents[0].title, userInputTitle)
+    }
+
+    @Test
+    fun `단일 게시글을 조회할 수 있다`(){
+        val savedMemberId = saveMember()
+        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+
+        val result = boardService.select(savedBoardId)
+
+        Assertions.assertEquals(result.id, savedBoardId)
+    }
+
+    @Test
+    fun `단일 게시글을 조회할 때 존재하지 않으면 IllegalArgumentException 발생`(){
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            boardService.select(NOT_EXIST_ID)
+        }
+    }
+
+    @Test
+    fun `게시글 조회수를 증가시킬 수 있다`(){
+        val savedMemberId = saveMember()
+        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+
+        boardService.updateHitByBoardId(savedBoardId)
+        entityManager.flush()
+        entityManager.clear()
+        val result = boardService.select(savedBoardId)
+
+        Assertions.assertEquals(result.hits,1)
+    }
+
+//    @Test
+//    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+//    fun `게시글 조회수를 증가시킬 때 데이터 동시성이 지켜진다`(){
+//        val savedMemberId = saveMember()
+//        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+//
+//        //100*1000만회
+//        runBlocking {
+//            GlobalScope.massiveRun {
+//                boardService.updateHitByBoardId(savedBoardId)
+//            }
+//        }
+//        entityManager.flush()
+//        val result = boardService.select(savedBoardId)
+//
+//        Assertions.assertEquals(result.hits, 100*1000)
+//    }
+//
+//    suspend fun CoroutineScope.massiveRun(action: suspend () -> Unit) {
+//        val n = 100  // number of coroutines to launch
+//        val k = 1000 // times an action is repeated by each coroutine
+//        val time = measureTimeMillis {
+//            val jobs = List(n) {
+//                launch {
+//                    repeat(k) { action() }
+//                }
+//            }
+//            jobs.forEach { it.join() }
+//        }
+//        println("Completed ${n * k} actions in $time ms")
+//    }
 
     companion object {
         const val NOT_EXIST_ID = -1L
