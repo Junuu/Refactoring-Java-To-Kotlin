@@ -1,9 +1,10 @@
+import anthill.Anthill.api.dto.board.BoardDeleteDTO
 import anthill.Anthill.api.dto.board.BoardRequestDTO
 import anthill.Anthill.api.dto.board.BoardUpdateDTO
 import anthill.Anthill.db.domain.board.Board
 import anthill.Anthill.db.domain.member.Member
 
-object TestFixture{
+object TestFixture {
     fun makeBoard(): Board {
         return Board.builder()
             .id(1L)
@@ -16,8 +17,8 @@ object TestFixture{
     }
 
     fun boardRequestDTO(
-        savedMemberId : Long
-    ): BoardRequestDTO{
+        savedMemberId: Long
+    ): BoardRequestDTO {
         val userInputTitle = "userInputTitle"
         val userInputContent = "userInputContent"
         val userInputWriter = "userInputWriter"
@@ -29,7 +30,10 @@ object TestFixture{
         )
     }
 
-    fun boardUpdateDTO(savedBoardId : Long): BoardUpdateDTO{
+    fun boardUpdateDTO(
+        savedBoardId: Long,
+        savedMemberId: Long,
+    ): BoardUpdateDTO {
         val userInputUpdateTitle = "userInputUpdateTitle"
         val userInputUpdateContent = "userInputUpdateContent"
         val savedWriter = "userInputWriter"
@@ -38,6 +42,17 @@ object TestFixture{
             userInputUpdateTitle,
             userInputUpdateContent,
             savedWriter,
+            savedMemberId,
+        )
+    }
+
+    fun boardDeleteDTO(
+        savedBoardId: Long,
+        savedMemberId: Long,
+    ): BoardDeleteDTO {
+        return BoardDeleteDTO(
+            savedBoardId,
+            savedMemberId,
         )
     }
 

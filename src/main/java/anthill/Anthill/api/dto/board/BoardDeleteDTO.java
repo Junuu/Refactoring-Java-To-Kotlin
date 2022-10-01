@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardDeleteDTO {
     Long id;
-    String writer;
+    Long memberId;
 
     @Builder
-    public BoardDeleteDTO(Long id, String writer) {
+    public BoardDeleteDTO(Long id, Long memberId) {
         this.id = id;
-        this.writer = writer;
+        this.memberId = memberId;
     }
 }
 

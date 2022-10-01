@@ -178,7 +178,7 @@ class BoardServiceImplTest {
     private BoardDeleteDTO makeBoardDeleteDTO(Long id) {
         BoardDeleteDTO boardDeleteDTO = BoardDeleteDTO.builder()
                                                       .id(id)
-                                                      .writer("작성자")
+                                                      .memberId(id)
                                                       .build();
         return boardDeleteDTO;
     }

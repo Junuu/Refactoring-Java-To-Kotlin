@@ -6,6 +6,7 @@ import anthill.Anthill.api.service.BoardServiceImpl
 import anthill.Anthill.db.domain.member.Member
 import anthill.Anthill.db.repository.BoardRepository
 import anthill.Anthill.db.repository.MemberRepository
+import org.apache.tomcat.websocket.AuthenticationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,7 +18,7 @@ import javax.persistence.PersistenceContext
 
 @DataJpaTest
 class BoardServiceTest @Autowired constructor(
-    val boardRepository : BoardRepository,
+    val boardRepository: BoardRepository,
     val memberRepository: MemberRepository,
 ) {
     private lateinit var boardService: BoardService
@@ -26,7 +27,7 @@ class BoardServiceTest @Autowired constructor(
     private lateinit var entityManager: EntityManager
 
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         boardService = BoardServiceImpl(
             boardRepository,
             memberRepository,
@@ -47,12 +48,14 @@ class BoardServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `게시글의 제목,내용,작성자,조회수가 올바르게 저장된다`(){
+    fun `게시글의 제목,내용,작성자,조회수가 올바르게 저장된다`() {
         val userInputTitle = "userInputTitle"
         val userInputContent = "userInputContent"
         val userInputWriter = "userInputWriter"
         val savedMemberId = saveMember()
-        val boardRequestDTO = TestFixture.boardRequestDTO(savedMemberId = savedMemberId)
+        val boardRequestDTO = TestFixture.boardRequestDTO(
+            savedMemberId = savedMemberId,
+        )
 
         val savedBoardId = boardService.posting(boardRequestDTO)
         val savedBoard = boardRepository.findById(savedBoardId).get()
@@ -65,19 +68,24 @@ class BoardServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `존재하지 않는 회원 ID가 요청으로 들어오면 IllegalArgumentException 발생`(){
-        val boardRequestDTO = TestFixture.boardRequestDTO(savedMemberId = 1L)
+    fun `존재하지 않는 회원 ID가 요청으로 들어오면 IllegalArgumentException 발생`() {
+        val boardRequestDTO = TestFixture.boardRequestDTO(
+            savedMemberId = NOT_EXIST_ID,
+        )
 
-        Assertions.assertThrows(IllegalArgumentException::class.java){
-            val savedBoardId = boardService.posting(boardRequestDTO)
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            boardService.posting(boardRequestDTO)
         }
     }
 
     @Test
-    fun `게시글의 제목,정보를 변경할 수 있다`(){
+    fun `게시글의 제목,정보를 변경할 수 있다`() {
         val savedMemberId = saveMember()
         val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
-        val boardUpdateDTO = TestFixture.boardUpdateDTO(savedBoardId)
+        val boardUpdateDTO = TestFixture.boardUpdateDTO(
+            savedBoardId = savedBoardId,
+            savedMemberId = savedMemberId,
+        )
         val userInputUpdateTitle = "userInputUpdateTitle"
         val userInputUpdateContent = "userInputUpdateContent"
 
@@ -91,5 +99,77 @@ class BoardServiceTest @Autowired constructor(
         Assertions.assertEquals(result.content, userInputUpdateContent)
     }
 
+    @Test
+    fun `존재 하지 않는 게시판 ID가 요청으로 들어오면 IllegalArgumentException 발생`() {
+        val boardUpdateDTO = TestFixture.boardUpdateDTO(
+            savedBoardId = NOT_EXIST_ID,
+            savedMemberId = NOT_EXIST_ID,
+        )
+
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            boardService.changeInfo(boardUpdateDTO)
+        }
+    }
+
+    @Test
+    fun `게시글을 쓴사람의 id와 변경하는 사람의 id가 다른경우 AuthenticationException 발생`() {
+        val savedMemberId = saveMember()
+        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val boardUpdateDTO = TestFixture.boardUpdateDTO(
+            savedBoardId = savedBoardId,
+            savedMemberId = NOT_EXIST_ID,
+        )
+        entityManager.flush()
+
+        Assertions.assertThrows(AuthenticationException::class.java) {
+            boardService.changeInfo(boardUpdateDTO)
+        }
+    }
+
+    @Test
+    fun `게시글을 삭제하려고 하는데 해당 게시물이 없으면 IllegalArgumentException 발생`() {
+        val boardDeleteDTO = TestFixture.boardDeleteDTO(
+            savedBoardId = NOT_EXIST_ID,
+            savedMemberId = NOT_EXIST_ID,
+        )
+
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            boardService.delete(boardDeleteDTO)
+        }
+    }
+
+    @Test
+    fun `게시글을 삭제하려고 하는데 삭제 권한이 없으면 AuthenticationException 발생`() {
+        val savedMemberId = saveMember()
+        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val boardDeleteDTO = TestFixture.boardDeleteDTO(
+            savedBoardId = savedBoardId,
+            savedMemberId = NOT_EXIST_ID,
+        )
+
+        Assertions.assertThrows(AuthenticationException::class.java) {
+            boardService.delete(boardDeleteDTO)
+        }
+    }
+
+    @Test
+    fun `게시글을 생성하고 삭제`() {
+        val savedMemberId = saveMember()
+        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val boardDeleteDTO = TestFixture.boardDeleteDTO(
+            savedBoardId = savedBoardId,
+            savedMemberId = savedMemberId,
+        )
+
+        boardService.delete(boardDeleteDTO)
+
+        val repositoryDataCount = boardRepository.findAll().size
+        Assertions.assertEquals(repositoryDataCount, 0)
+
+    }
+
+    companion object {
+        const val NOT_EXIST_ID = -1L
+    }
 
 }

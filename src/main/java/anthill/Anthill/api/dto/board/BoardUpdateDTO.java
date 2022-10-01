@@ -12,12 +12,14 @@ public class BoardUpdateDTO {
     String title;
     String content;
     String writer;
+    Long memberId;
 
     @Builder
-    public BoardUpdateDTO(Long id, String title, String content, String writer) {
+    public BoardUpdateDTO(Long id, String title, String content, String writer, Long memberId) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.writer = writer;
+        this.memberId = memberId;
     }
 }

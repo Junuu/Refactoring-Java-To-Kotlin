@@ -277,7 +277,7 @@ class BoardControllerTest {
     private BoardDeleteDTO makeBoardDeleteDTO() {
         BoardDeleteDTO boardDeleteDTO = BoardDeleteDTO.builder()
                                                       .id(1L)
-                                                      .writer("test")
+                                                      .memberId(1L)
                                                       .build();
         return boardDeleteDTO;
     }
