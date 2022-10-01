@@ -56,7 +56,8 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(boardDeleteDto.getId())
                                      .orElseThrow(() -> new IllegalArgumentException());
 
-        if (board.getMember().getId() != boardDeleteDto.getMemberId()) {
+        if (board.getMember()
+                 .getId() != boardDeleteDto.getMemberId()) {
             throw new AuthenticationException("권한 없음");
         }
 
@@ -64,13 +65,15 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardPageResponseDTO paging(int id) {
+    public BoardPageResponseDTO paging(int pageIndex) {
 
-        Pageable curPage = PageRequest.of(id, 10, Sort.by("id")
-                                                      .descending());
+        Pageable curPage = PageRequest.of(pageIndex, 10, Sort.by("id")
+                                                             .descending());
         Page<Board> result = boardRepository.findAll(curPage);
 
-        if (id > result.getTotalPages()) {
+        if (pageIndex > result.getTotalPages() ||
+                pageIndex < 0
+        ) {
             throw new IllegalStateException("유효하지 않은 페이지");
         }
 
