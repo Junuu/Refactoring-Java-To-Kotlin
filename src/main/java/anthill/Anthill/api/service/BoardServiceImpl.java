@@ -71,10 +71,9 @@ public class BoardServiceImpl implements BoardService {
                                                              .descending());
         Page<Board> result = boardRepository.findAll(curPage);
 
-        if (pageIndex > result.getTotalPages() ||
-                pageIndex < 0
+        if (pageIndex > result.getTotalPages()
         ) {
-            throw new IllegalStateException("유효하지 않은 페이지");
+            throw new IllegalArgumentException("유효하지 않은 페이지");
         }
 
         BoardPageResponseDTO map = BoardPageResponseDTO.toBoardPagingDTO(result);

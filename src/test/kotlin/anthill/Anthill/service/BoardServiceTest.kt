@@ -10,6 +10,8 @@ import org.apache.tomcat.websocket.AuthenticationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import javax.persistence.EntityManager
@@ -165,8 +167,18 @@ class BoardServiceTest @Autowired constructor(
 
         val repositoryDataCount = boardRepository.findAll().size
         Assertions.assertEquals(repositoryDataCount, 0)
-
     }
+
+    @ParameterizedTest
+    @ValueSource(ints = [-100,-1])
+    fun `0보다 큰 페이지 index를 넣어주지 않으면 IllegalArgumentException 발생`(input: Int){
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            boardService.paging(input)
+        }
+    }
+
+
+
 
     companion object {
         const val NOT_EXIST_ID = -1L
