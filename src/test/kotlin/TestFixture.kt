@@ -1,6 +1,4 @@
-import anthill.Anthill.api.dto.board.BoardDeleteDTO
-import anthill.Anthill.api.dto.board.BoardRequestDTO
-import anthill.Anthill.api.dto.board.BoardUpdateDTO
+import anthill.Anthill.api.dto.board.*
 import anthill.Anthill.api.dto.member.MemberLoginRequestDTO
 import anthill.Anthill.api.dto.member.MemberRequestDTO
 import anthill.Anthill.db.domain.board.Board
@@ -33,6 +31,16 @@ object TestFixture {
         )
     }
 
+    fun boardResponseDTO(): BoardResponseDTO {
+        return BoardResponseDTO.builder()
+            .id(1L)
+            .title("제목")
+            .content("본문")
+            .writer("작성자")
+            .hits(1L)
+            .build()
+    }
+
     fun boardUpdateDTO(
         savedBoardId: Long,
         savedMemberId: Long,
@@ -57,6 +65,29 @@ object TestFixture {
             savedBoardId,
             savedMemberId,
         )
+    }
+
+    fun boardPageResponseDTO(): BoardPageResponseDTO {
+        val data: MutableList<BoardInfoDTO> = ArrayList()
+        for (i in 1L..2L) {
+            data.add(
+                BoardInfoDTO.builder()
+                    .id(i)
+                    .title("본문")
+                    .content("제목")
+                    .writer("작성자")
+                    .hits(i)
+                    .build()
+            )
+        }
+        return BoardPageResponseDTO
+            .builder()
+            .contents(data)
+            .totalPage(1)
+            .totalElements(2)
+            .curPage(1)
+            .size(10)
+            .build()
     }
 
     fun makeMember(): Member {
@@ -88,7 +119,7 @@ object TestFixture {
     }
 
     fun memberLoginRequestDTO(
-        password : String,
+        password: String,
     ): MemberLoginRequestDTO {
         return MemberLoginRequestDTO
             .builder()
