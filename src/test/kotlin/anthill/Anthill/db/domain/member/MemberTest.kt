@@ -1,4 +1,4 @@
-package anthill.Anthill.service.domain.member
+package anthill.Anthill.db.domain.member
 
 import TestFixture
 import org.junit.jupiter.api.Assertions

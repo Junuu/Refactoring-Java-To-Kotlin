@@ -1,4 +1,4 @@
-package anthill.Anthill.service;
+package anthill.Anthill.api.service;
 
 import anthill.Anthill.api.service.JwtService;
 import anthill.Anthill.api.service.JwtServiceImpl;

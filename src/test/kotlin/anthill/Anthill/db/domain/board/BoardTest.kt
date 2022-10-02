@@ -1,4 +1,4 @@
-package anthill.Anthill.service.domain.board
+package anthill.Anthill.db.domain.board
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

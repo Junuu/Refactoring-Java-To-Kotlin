@@ -1,4 +1,4 @@
-package anthill.Anthill.service
+package anthill.Anthill.api.service
 
 import TestFixture
 import anthill.Anthill.api.service.BoardService
@@ -248,10 +248,10 @@ class BoardServiceTest @Autowired constructor(
     }
 
 //    @Test
-//    @Transactional(propagation = Propagation.NOT_SUPPORTED)
 //    fun `게시글 조회수를 증가시킬 때 데이터 동시성이 지켜진다`(){
 //        val savedMemberId = saveMember()
 //        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+//        entityManager.flush()
 //
 //        //100*1000만회
 //        runBlocking {

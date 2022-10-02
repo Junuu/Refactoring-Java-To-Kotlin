@@ -34,7 +34,6 @@ public class BoardServiceImpl implements BoardService {
                            .writer(boardRequestDTO.getWriter())
                            .hits(0L)
                            .build();
-
         return boardRepository.save(board)
                               .getId();
     }
