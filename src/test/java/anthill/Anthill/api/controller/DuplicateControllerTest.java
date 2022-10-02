@@ -1,4 +1,4 @@
-package anthill.Anthill.controller;
+package anthill.Anthill.api.controller;
 
 import anthill.Anthill.api.controller.DuplicateController;
 import anthill.Anthill.api.dto.member.MemberDuplicateResponseDTO;

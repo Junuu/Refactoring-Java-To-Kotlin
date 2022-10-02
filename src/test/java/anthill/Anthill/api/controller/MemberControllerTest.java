@@ -1,4 +1,4 @@
-package anthill.Anthill.controller;
+package anthill.Anthill.api.controller;
 
 import anthill.Anthill.api.controller.MemberController;
 import anthill.Anthill.db.domain.member.Address;
