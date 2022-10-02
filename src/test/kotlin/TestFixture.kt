@@ -63,7 +63,7 @@ object TestFixture {
         return Member.builder()
             .id(1L)
             .userId("userId")
-            .password("password")
+            .password("123456789")
             .nickName("junwoo")
             .name("김준우")
             .phoneNumber("01012345678")

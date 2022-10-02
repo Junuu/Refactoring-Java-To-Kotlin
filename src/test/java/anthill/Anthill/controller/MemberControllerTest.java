@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 
+import javax.naming.AuthenticationException;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -90,8 +92,7 @@ class MemberControllerTest {
         MemberRequestDTO memberRequestDTO = getMemberRequestDTO();
         String body = (new ObjectMapper()).writeValueAsString(memberRequestDTO);
         boolean duplicateResult = true;
-        //given(memberService.validateIsDuplicate(any())).willReturn(duplicateResult);
-
+        given(memberService.join(any())).willThrow(new IllegalArgumentException());
 
         //when
         ResultActions resultActions = mvc.perform(post("/members")
@@ -102,7 +103,7 @@ class MemberControllerTest {
 
         //then
         resultActions
-                .andExpect(status().isConflict());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -110,8 +111,7 @@ class MemberControllerTest {
         //given
         MemberRequestDTO memberRequestDTO = getMemberRequestDTO();
         String body = (new ObjectMapper()).writeValueAsString(memberRequestDTO);
-        boolean duplicateResult = false;
-        //given(memberService.validateIsDuplicate(any())).willReturn(duplicateResult);
+        given(memberService.join(any())).willReturn(1L);
 
         //when
         ResultActions resultActions = mvc.perform(post("/members")
@@ -134,7 +134,7 @@ class MemberControllerTest {
                                 fieldWithPath("phoneNumber").description("전화 번호"),
                                 fieldWithPath("address.streetNameAddress").description("주소")
                                                                  .optional(),
-                                fieldWithPath("address.detainAddress").description("상세 주소")
+                                fieldWithPath("address.detailAddress").description("상세 주소")
                                                                  .optional(),
                                 fieldWithPath("address.zipCode").description("우편 번호")
                                                                 .optional()
@@ -228,7 +228,7 @@ class MemberControllerTest {
                                      fieldWithPath("responseData.phoneNumber").description("전화 번호"),
                                      fieldWithPath("responseData.address.streetNameAddress").description("주소")
                                                                                    .optional(),
-                                     fieldWithPath("responseData.address.detainAddress").description("상세 주소")
+                                     fieldWithPath("responseData.address.detailAddress").description("상세 주소")
                                                                                    .optional(),
                                      fieldWithPath("responseData.address.zipCode").description("우편 번호")
                                                                                   .optional(),

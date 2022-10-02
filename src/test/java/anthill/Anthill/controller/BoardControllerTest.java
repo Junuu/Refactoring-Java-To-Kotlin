@@ -210,6 +210,7 @@ class BoardControllerTest {
                                      ),
                                      requestFields(
                                              fieldWithPath("id").description("글번호"),
+                                             fieldWithPath("memberId").description("회원번호"),
                                              fieldWithPath("title").description("제목"),
                                              fieldWithPath("content").description("본문"),
                                              fieldWithPath("writer").description("작성자")
@@ -249,7 +250,7 @@ class BoardControllerTest {
                                      ),
                                      requestFields(
                                              fieldWithPath("id").description("글번호"),
-                                             fieldWithPath("writer").description("작성자")
+                                             fieldWithPath("memberId").description("회원번호")
                                      ),
                                      responseFields(
                                              fieldWithPath("message").description("메시지"),
@@ -326,5 +327,4 @@ class BoardControllerTest {
                 .build();
 
     }
-
 }
