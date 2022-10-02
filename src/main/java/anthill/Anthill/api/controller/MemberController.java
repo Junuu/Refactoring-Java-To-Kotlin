@@ -40,12 +40,6 @@ public class MemberController {
 
     @PostMapping
     public ResponseEntity<BasicResponseDTO> registerMember(@Valid @RequestBody MemberRequestDTO memberRequestDTO) {
-
-        if (memberService.validateIsDuplicate(memberRequestDTO)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                                 .body(makeBasicResponseDTO(FAIL, null));
-        }
-
         memberService.join(memberRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(makeBasicResponseDTO(SUCCESS, null));

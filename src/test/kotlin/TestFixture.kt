@@ -1,7 +1,10 @@
 import anthill.Anthill.api.dto.board.BoardDeleteDTO
 import anthill.Anthill.api.dto.board.BoardRequestDTO
 import anthill.Anthill.api.dto.board.BoardUpdateDTO
+import anthill.Anthill.api.dto.member.MemberLoginRequestDTO
+import anthill.Anthill.api.dto.member.MemberRequestDTO
 import anthill.Anthill.db.domain.board.Board
+import anthill.Anthill.db.domain.member.Address
 import anthill.Anthill.db.domain.member.Member
 
 object TestFixture {
@@ -60,10 +63,37 @@ object TestFixture {
         return Member.builder()
             .id(1L)
             .userId("userId")
-            .password("123456789")
+            .password("password")
             .nickName("junwoo")
             .name("김준우")
+            .phoneNumber("01012345678")
             .build()
+    }
 
+    fun memberRequestDTO(): MemberRequestDTO {
+        return MemberRequestDTO.builder()
+            .userId("userId")
+            .password("correctPassword")
+            .nickName("junwoo")
+            .name("김준우")
+            .phoneNumber("01012345678")
+            .address(
+                Address(
+                    "zipCode",
+                    "streetNameAddress",
+                    "detailAddress",
+                )
+            )
+            .build()
+    }
+
+    fun memberLoginRequestDTO(
+        password : String,
+    ): MemberLoginRequestDTO {
+        return MemberLoginRequestDTO
+            .builder()
+            .userId("userId")
+            .password(password)
+            .build()
     }
 }

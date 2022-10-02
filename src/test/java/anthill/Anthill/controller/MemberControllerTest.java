@@ -90,7 +90,7 @@ class MemberControllerTest {
         MemberRequestDTO memberRequestDTO = getMemberRequestDTO();
         String body = (new ObjectMapper()).writeValueAsString(memberRequestDTO);
         boolean duplicateResult = true;
-        given(memberService.validateIsDuplicate(any())).willReturn(duplicateResult);
+        //given(memberService.validateIsDuplicate(any())).willReturn(duplicateResult);
 
 
         //when
@@ -111,7 +111,7 @@ class MemberControllerTest {
         MemberRequestDTO memberRequestDTO = getMemberRequestDTO();
         String body = (new ObjectMapper()).writeValueAsString(memberRequestDTO);
         boolean duplicateResult = false;
-        given(memberService.validateIsDuplicate(any())).willReturn(duplicateResult);
+        //given(memberService.validateIsDuplicate(any())).willReturn(duplicateResult);
 
         //when
         ResultActions resultActions = mvc.perform(post("/members")
@@ -255,7 +255,7 @@ class MemberControllerTest {
     private MemberResponseDTO getMemberResponseDTO() {
         Address myAddress = Address.builder()
                                    .streetNameAddress("경기도 시흥시")
-                                   .detainAddress("XX아파트 XX호")
+                .detailAddress("XX아파트 XX호")
                                    .zipCode("429-010")
                                    .build();
 
@@ -274,7 +274,7 @@ class MemberControllerTest {
 
         Address myAddress = Address.builder()
                                    .streetNameAddress("경기도 시흥시")
-                                   .detainAddress("XX아파트 XX호")
+                .detailAddress("XX아파트 XX호")
                                    .zipCode("429-010")
                                    .build();
 

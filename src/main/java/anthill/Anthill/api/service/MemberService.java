@@ -6,9 +6,7 @@ import anthill.Anthill.api.dto.member.MemberResponseDTO;
 
 
 public interface MemberService {
-    void join(MemberRequestDTO memberRequestDTO);
-
-    boolean validateIsDuplicate(MemberRequestDTO memberRequestDTO);
+    Long join(MemberRequestDTO memberRequestDTO);
 
     boolean checkNicknameDuplicate(String nickName);
 

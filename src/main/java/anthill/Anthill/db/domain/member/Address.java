@@ -12,12 +12,12 @@ import javax.persistence.Embeddable;
 public class Address{
     private String zipCode;
     private String streetNameAddress;
-    private String detainAddress;
+    private String detailAddress;
 
     @Builder
-    public Address(String zipCode, String streetNameAddress, String detainAddress) {
+    public Address(String zipCode, String streetNameAddress, String detailAddress) {
         this.zipCode = zipCode;
         this.streetNameAddress = streetNameAddress;
-        this.detainAddress = detainAddress;
+        this.detailAddress = detailAddress;
     }
 }

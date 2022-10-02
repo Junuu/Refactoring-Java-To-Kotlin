@@ -20,23 +20,23 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public void join(MemberRequestDTO memberRequestDTO) {
+    public Long join(MemberRequestDTO memberRequestDTO) {
+        validateIsDuplicate(memberRequestDTO);
         memberRequestDTO.hashingPassword();
-        memberRepository.save(memberRequestDTO.toEntity());
+        return memberRepository.save(memberRequestDTO.toEntity())
+                               .getId();
     }
 
-    @Override
-    public boolean validateIsDuplicate(MemberRequestDTO member) {
+    private void validateIsDuplicate(MemberRequestDTO member) {
         if (checkPhoneNumberDuplicate(member.getPhoneNumber())) {
-            return true;
+            throw new IllegalArgumentException();
         }
         if (checkNicknameDuplicate(member.getNickName())) {
-            return true;
+            throw new IllegalArgumentException();
         }
         if (checkUserIdDuplicate(member.getUserId())) {
-            return true;
+            throw new IllegalArgumentException();
         }
-        return false;
     }
 
     @Override

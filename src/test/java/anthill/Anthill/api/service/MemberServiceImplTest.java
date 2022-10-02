@@ -1,7 +1,5 @@
 package anthill.Anthill.api.service;
 
-import anthill.Anthill.api.service.MemberService;
-import anthill.Anthill.api.service.MemberServiceImpl;
 import anthill.Anthill.db.domain.member.Address;
 import anthill.Anthill.db.domain.member.Member;
 import anthill.Anthill.api.dto.member.MemberLoginRequestDTO;
@@ -42,25 +40,10 @@ class MemberServiceImplTest {
 
         //then
         assertThat("Test").isEqualTo(memberRepository.findByUserId("Test")
-                                                     .get()
-                                                     .getUserId());
+                                                     .get().getUserId());
     }
 
 
-    @Test
-    @DisplayName("회원 가입 중복 발생")
-    public void memberDuplicateTest() {
-
-        //given
-        MemberRequestDTO memberRequestDTO = getMemberRequestDTO("Test");
-
-        memberService.join(memberRequestDTO);
-        MemberRequestDTO member1 = getMemberRequestDTO("Test");
-
-        boolean result = memberService.validateIsDuplicate(member1);
-        Assertions.assertEquals(result, true);
-
-    }
 
     @Test
     @DisplayName("회원 아이디 중복 검증")
