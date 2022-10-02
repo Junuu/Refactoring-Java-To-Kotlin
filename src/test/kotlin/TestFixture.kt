@@ -1,6 +1,7 @@
 import anthill.Anthill.api.dto.board.*
 import anthill.Anthill.api.dto.member.MemberLoginRequestDTO
 import anthill.Anthill.api.dto.member.MemberRequestDTO
+import anthill.Anthill.api.dto.member.MemberResponseDTO
 import anthill.Anthill.db.domain.board.Board
 import anthill.Anthill.db.domain.member.Address
 import anthill.Anthill.db.domain.member.Member
@@ -101,30 +102,46 @@ object TestFixture {
             .build()
     }
 
-    fun memberRequestDTO(): MemberRequestDTO {
-        return MemberRequestDTO.builder()
-            .userId("userId")
-            .password("correctPassword")
-            .nickName("junwoo")
-            .name("김준우")
-            .phoneNumber("01012345678")
-            .address(
-                Address(
-                    "zipCode",
-                    "streetNameAddress",
-                    "detailAddress",
-                )
-            )
-            .build()
-    }
-
     fun memberLoginRequestDTO(
+        userId: String = "junwooKim",
         password: String,
     ): MemberLoginRequestDTO {
         return MemberLoginRequestDTO
             .builder()
-            .userId("userId")
+            .userId(userId)
             .password(password)
             .build()
     }
+
+    fun memberRequestDTO(): MemberRequestDTO {
+        val myAddress = Address.builder()
+            .streetNameAddress("경기도 시흥시")
+            .detailAddress("XX아파트 XX호")
+            .zipCode("429-010")
+            .build()
+        return MemberRequestDTO.builder()
+            .userId("junwooKim")
+            .name("KIM")
+            .nickName("junuuu")
+            .password("123456789")
+            .phoneNumber("01012345678")
+            .address(myAddress)
+            .build()
+    }
+
+    fun memberResponseDTO(): MemberResponseDTO {
+        val myAddress = Address.builder()
+            .streetNameAddress("경기도 시흥시")
+            .detailAddress("XX아파트 XX호")
+            .zipCode("429-010")
+            .build()
+        return MemberResponseDTO.builder()
+            .userId("test")
+            .name("test")
+            .nickName("test")
+            .phoneNumber("01012345678")
+            .address(myAddress)
+            .build()
+    }
+
 }
