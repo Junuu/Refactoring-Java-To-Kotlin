@@ -1,15 +1,10 @@
 package anthill.Anthill.api.service
 
 import TestFixture
-import anthill.Anthill.api.service.BoardService
-import anthill.Anthill.api.service.BoardServiceImpl
+import anthill.Anthill.db.domain.member.Address
 import anthill.Anthill.db.domain.member.Member
 import anthill.Anthill.db.repository.BoardRepository
 import anthill.Anthill.db.repository.MemberRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.apache.tomcat.websocket.AuthenticationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -18,11 +13,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.transaction.annotation.Propagation
-import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
-import kotlin.system.measureTimeMillis
 
 
 @DataJpaTest
@@ -45,13 +37,18 @@ class BoardServiceTest @Autowired constructor(
 
     private fun saveMember(): Long {
         val savedMember = memberRepository.save(
-            Member.builder()
-                .userId("junwoo")
-                .password("123456789")
-                .phoneNumber("01012345678")
-                .name("김준우")
-                .nickName("junwoo")
-                .build()
+            Member(
+                userId = "junwoo",
+                password = "123456789",
+                phoneNumber = "01012345678",
+                name = "김준우",
+                nickName = "junwoo",
+                address = Address(
+                    streetNameAddress = "경기도 시흥시",
+                    detailAddress = "XX아파트 XX호",
+                    zipCode = "429-010",
+                )
+            )
         )
         return savedMember.id
     }
@@ -188,21 +185,21 @@ class BoardServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `0~페이지 크기보다 작은 범위의 index를 넣으면 페이징 조회에 성공한다`(){
+    fun `0~페이지 크기보다 작은 범위의 index를 넣으면 페이징 조회에 성공한다`() {
         val savedMemberId = saveMember()
-        repeat(43){
+        repeat(43) {
             boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
         }
 
         val firstPaging = boardService.paging(0)
         val lastPaging = boardService.paging(4)
 
-        Assertions.assertEquals(10,firstPaging.contents.size)
-        Assertions.assertEquals(3,lastPaging.contents.size)
+        Assertions.assertEquals(10, firstPaging.contents.size)
+        Assertions.assertEquals(3, lastPaging.contents.size)
     }
 
     @Test
-    fun `페이지된 상세페이지를 조회할 수 있다`(){
+    fun `페이지된 상세페이지를 조회할 수 있다`() {
         val savedMemberId = saveMember()
         boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
         val userInputTitle = "userInputTitle"
@@ -218,7 +215,7 @@ class BoardServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `단일 게시글을 조회할 수 있다`(){
+    fun `단일 게시글을 조회할 수 있다`() {
         val savedMemberId = saveMember()
         val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
 
@@ -228,14 +225,14 @@ class BoardServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `단일 게시글을 조회할 때 존재하지 않으면 IllegalArgumentException 발생`(){
+    fun `단일 게시글을 조회할 때 존재하지 않으면 IllegalArgumentException 발생`() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             boardService.select(NOT_EXIST_ID)
         }
     }
 
     @Test
-    fun `게시글 조회수를 증가시킬 수 있다`(){
+    fun `게시글 조회수를 증가시킬 수 있다`() {
         val savedMemberId = saveMember()
         val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
 
@@ -244,7 +241,7 @@ class BoardServiceTest @Autowired constructor(
         entityManager.clear()
         val result = boardService.select(savedBoardId)
 
-        Assertions.assertEquals(result.hits,1)
+        Assertions.assertEquals(result.hits, 1)
     }
 
 //    @Test

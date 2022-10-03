@@ -37,8 +37,9 @@ class MemberControllerTest {
 
     @Test
     fun `회원가입 입력값이 유효하지않으면 400 BAD Request 반환`() {
-        val memberRequestDTO = MemberRequestDTO.builder()
-            .build()
+        val memberRequestDTO = TestFixture.memberRequestDTO(
+            userId = ""
+        )
         val body = ObjectMapper().writeValueAsString(memberRequestDTO)
 
         val resultActions = mvc.perform(

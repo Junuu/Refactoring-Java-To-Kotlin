@@ -9,7 +9,6 @@ class MemberTest {
     fun `회원은 id,userId,password,nickName,name을 가진다`(){
         val member = TestFixture.makeMember()
 
-        Assertions.assertEquals(member.id, 1L)
         Assertions.assertEquals(member.userId, "userId")
         Assertions.assertEquals(member.password, "123456789")
         Assertions.assertEquals(member.nickName, "junwoo")

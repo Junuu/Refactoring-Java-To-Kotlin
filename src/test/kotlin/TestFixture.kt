@@ -91,14 +91,18 @@ object TestFixture {
     }
 
     fun makeMember(): Member {
-        return Member.builder()
-            .id(1L)
-            .userId("userId")
-            .password("123456789")
-            .nickName("junwoo")
-            .name("김준우")
-            .phoneNumber("01012345678")
-            .build()
+        return Member(
+            userId = "userId",
+            password = "123456789",
+            nickName = "junwoo",
+            name = "김준우",
+            phoneNumber = "01012345678",
+            address = Address(
+                streetNameAddress = "경기도 시흥시",
+                detailAddress = "XX아파트 XX호",
+                zipCode = "429-010",
+            )
+        )
     }
 
     fun memberLoginRequestDTO(
@@ -112,35 +116,44 @@ object TestFixture {
             .build()
     }
 
-    fun memberRequestDTO(): MemberRequestDTO {
-        val myAddress = Address.builder()
-            .streetNameAddress("경기도 시흥시")
-            .detailAddress("XX아파트 XX호")
-            .zipCode("429-010")
-            .build()
-        return MemberRequestDTO.builder()
-            .userId("junwooKim")
-            .name("KIM")
-            .nickName("junuuu")
-            .password("123456789")
-            .phoneNumber("01012345678")
-            .address(myAddress)
-            .build()
+    fun memberRequestDTO(
+        streetNameAddress: String = "경기도 시흥시",
+        detailAddress: String = "XX아파트 XX호",
+        zipCode: String = "429-010",
+        userId: String = "junwooKim",
+        name: String = "KIM",
+        nickName: String = "junuuu",
+        password: String = "123456789",
+        phoneNumber: String = "01012345678",
+    ): MemberRequestDTO {
+        val myAddress = Address(
+            streetNameAddress = streetNameAddress,
+            detailAddress = detailAddress,
+            zipCode = zipCode,
+        )
+        return MemberRequestDTO(
+            userId = userId,
+            name = name,
+            nickName = nickName,
+            password = password,
+            phoneNumber = phoneNumber,
+            address = myAddress,
+        )
     }
 
     fun memberResponseDTO(): MemberResponseDTO {
-        val myAddress = Address.builder()
-            .streetNameAddress("경기도 시흥시")
-            .detailAddress("XX아파트 XX호")
-            .zipCode("429-010")
-            .build()
-        return MemberResponseDTO.builder()
-            .userId("test")
-            .name("test")
-            .nickName("test")
-            .phoneNumber("01012345678")
-            .address(myAddress)
-            .build()
+        val myAddress = Address(
+            streetNameAddress = "경기도 시흥시",
+            detailAddress = "XX아파트 XX호",
+            zipCode = "429-010",
+        )
+        return MemberResponseDTO(
+            userId = "test",
+            name = "test",
+            nickName = "test",
+            phoneNumber = "01012345678",
+            address = myAddress,
+        )
     }
 
 }
