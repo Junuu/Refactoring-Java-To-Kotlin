@@ -9,7 +9,6 @@ class BoardTest {
     fun `게시글은 id,제목,내용,작성자,조회수,작성자아이디를 가진다`() {
         val board = TestFixture.makeBoard()
 
-        Assertions.assertEquals(board.id, 1L)
         Assertions.assertEquals(board.content, "myContent")
         Assertions.assertEquals(board.hits, 0)
         Assertions.assertEquals(board.title, "myTitle")

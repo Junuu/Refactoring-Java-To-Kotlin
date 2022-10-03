@@ -8,14 +8,13 @@ import anthill.Anthill.db.domain.member.Member
 
 object TestFixture {
     fun makeBoard(): Board {
-        return Board.builder()
-            .id(1L)
-            .title("myTitle")
-            .content("myContent")
-            .hits(0)
-            .writer("writer")
-            .member(makeMember())
-            .build()
+        return Board(
+            title = "myTitle",
+            content = "myContent",
+            hits = 0L,
+            writer = "writer",
+            member = makeMember(),
+        )
     }
 
     fun boardRequestDTO(
@@ -33,13 +32,13 @@ object TestFixture {
     }
 
     fun boardResponseDTO(): BoardResponseDTO {
-        return BoardResponseDTO.builder()
-            .id(1L)
-            .title("제목")
-            .content("본문")
-            .writer("작성자")
-            .hits(1L)
-            .build()
+        return BoardResponseDTO(
+            id = 1L,
+            title = "제목",
+            content = "본문",
+            writer = "작성자",
+            hits = 1L,
+        )
     }
 
     fun boardUpdateDTO(

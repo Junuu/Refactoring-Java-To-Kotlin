@@ -1,9 +1,12 @@
 package anthill.Anthill.db.domain.member;
 
-import anthill.Anthill.db.domain.board.Board;
 import anthill.Anthill.api.dto.member.MemberResponseDTO;
+import anthill.Anthill.db.domain.board.Board;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;

@@ -1,5 +1,6 @@
 package anthill.Anthill.api.dto.board;
 
+
 import anthill.Anthill.db.domain.board.Board;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -27,13 +27,14 @@ public class BoardServiceImpl implements BoardService {
     public Long posting(BoardRequestDTO boardRequestDTO) {
         Member member = memberRepository.findById(boardRequestDTO.getMemberId())
                                         .orElseThrow(() -> new IllegalArgumentException());
-        Board board = Board.builder()
-                           .member(member)
-                           .title(boardRequestDTO.getTitle())
-                           .content(boardRequestDTO.getContent())
-                           .writer(boardRequestDTO.getWriter())
-                           .hits(0L)
-                           .build();
+        Board board = new Board(
+                boardRequestDTO.getTitle(),
+                boardRequestDTO.getContent(),
+                boardRequestDTO.getWriter(),
+                0L,
+                member = member
+        );
+
         return boardRepository.save(board)
                               .getId();
     }
@@ -41,7 +42,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void changeInfo(BoardUpdateDTO boardUpdateDTO) throws AuthenticationException {
         Board board = boardRepository.findById(boardUpdateDTO.getId())
-                                     .orElseThrow(() -> new IllegalArgumentException());
+                                         .orElseThrow(() -> new IllegalArgumentException());
 
         if (board.getMember()
                  .getId() != boardUpdateDTO.getMemberId()) {
@@ -53,7 +54,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void delete(BoardDeleteDTO boardDeleteDto) throws AuthenticationException {
         Board board = boardRepository.findById(boardDeleteDto.getId())
-                                     .orElseThrow(() -> new IllegalArgumentException());
+                                         .orElseThrow(() -> new IllegalArgumentException());
 
         if (board.getMember()
                  .getId() != boardDeleteDto.getMemberId()) {
@@ -82,7 +83,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardResponseDTO select(Long id) {
         Board board = boardRepository.findById(id)
-                                     .orElseThrow(() -> new IllegalArgumentException());
+                                         .orElseThrow(() -> new IllegalArgumentException());
         return board.toBoardResponseDTO();
     }
 
