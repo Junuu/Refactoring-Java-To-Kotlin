@@ -29,9 +29,9 @@ class BoardServiceTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
-        boardService = BoardServiceImpl(
-            boardRepository,
-            memberRepository,
+        boardService = BoardService(
+            boardRepository = boardRepository,
+            memberRepository = memberRepository,
         )
     }
 

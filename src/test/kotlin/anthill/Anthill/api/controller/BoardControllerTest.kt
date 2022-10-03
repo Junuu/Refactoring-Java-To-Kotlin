@@ -127,7 +127,7 @@ class BoardControllerTest {
     fun `게시글 단건 조회에 성공한다`() {
         val boardId = 1L
         val boardResponseDTO = TestFixture.boardResponseDTO()
-        BDDMockito.given(boardService.select(ArgumentMatchers.any())).willReturn(boardResponseDTO)
+        BDDMockito.given(boardService.select(ArgumentMatchers.anyLong())).willReturn(boardResponseDTO)
 
         val resultActions = mvc.perform(RestDocumentationRequestBuilders.get("/boards/{boardid}", boardId))
 
