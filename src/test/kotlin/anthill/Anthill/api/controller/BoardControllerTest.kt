@@ -55,7 +55,7 @@ class BoardControllerTest {
         val token = "header.payload.sign"
         val accessTokenHeader = "access-token"
         val body = ObjectMapper().writeValueAsString(boardRequestDTO)
-        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.any())).willReturn(true)
+        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(true)
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/boards")
@@ -160,7 +160,7 @@ class BoardControllerTest {
             savedMemberId = 1L,
         )
         val body = ObjectMapper().writeValueAsString(boardUpdateDTO)
-        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.any())).willReturn(false)
+        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(false)
 
         val resultActions = mvc.perform(
             RestDocumentationRequestBuilders.put("/boards")
@@ -181,7 +181,7 @@ class BoardControllerTest {
         val token = "header.payload.sign"
         val accessTokenHeader = "access-token"
         val body = ObjectMapper().writeValueAsString(boardUpdateDTO)
-        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.any())).willReturn(true)
+        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(true)
 
         val resultActions = mvc.perform(
             RestDocumentationRequestBuilders.put("/boards")
@@ -225,7 +225,7 @@ class BoardControllerTest {
         val token = "header.payload.sign"
         val accessTokenHeader = "access-token"
         val body = ObjectMapper().writeValueAsString(boardDeleteDTO)
-        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.any())).willReturn(true)
+        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(true)
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.delete("/boards")

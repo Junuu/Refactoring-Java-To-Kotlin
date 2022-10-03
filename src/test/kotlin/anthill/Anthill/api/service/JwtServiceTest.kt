@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 internal class JwtServiceTest {
-    private val jwtService: JwtService = JwtServiceImpl()
+    private val jwtService: JwtService = JwtService()
 
     @Test
     fun `userID를 기반해서 header 토큰이 올바르게 생성`() {

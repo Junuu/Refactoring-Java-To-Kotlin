@@ -137,7 +137,7 @@ class MemberControllerTest {
         val token = "header.payload.verifySignature"
         val loginResult = true
         BDDMockito.given(memberService.login(ArgumentMatchers.any())).willReturn(loginResult)
-        BDDMockito.given(jwtService.create(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+        BDDMockito.given(jwtService.create(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
             .willReturn(token)
 
         val resultActions = mvc.perform(
