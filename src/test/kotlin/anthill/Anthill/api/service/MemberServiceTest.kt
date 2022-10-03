@@ -16,8 +16,8 @@ class MemberServiceTest @Autowired constructor(
 
     @BeforeEach
     fun setup() {
-        memberService = MemberServiceImpl(
-            memberRepository,
+        memberService = MemberService(
+            memberRepository = memberRepository,
         )
     }
 

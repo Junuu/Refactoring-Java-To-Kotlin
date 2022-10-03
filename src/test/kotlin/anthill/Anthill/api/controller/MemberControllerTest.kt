@@ -1,6 +1,7 @@
 package anthill.Anthill.api.controller
 
 import TestFixture
+import anthill.Anthill.api.dto.member.MemberLoginRequestDTO
 import anthill.Anthill.api.dto.member.MemberRequestDTO
 import anthill.Anthill.api.service.JwtService
 import anthill.Anthill.api.service.MemberService
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -34,6 +36,11 @@ class MemberControllerTest {
 
     @MockBean
     lateinit var jwtService: JwtService
+
+    private fun <T> any(): T {
+        Mockito.any<T>()
+        return null as T
+    }
 
     @Test
     fun `회원가입 입력값이 유효하지않으면 400 BAD Request 반환`() {
@@ -73,7 +80,7 @@ class MemberControllerTest {
     fun `회원가입 시 중복이 발생한다면 404 not found 반환`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
         val body = ObjectMapper().writeValueAsString(memberRequestDTO)
-        BDDMockito.given(memberService.join(ArgumentMatchers.any())).willThrow(IllegalArgumentException())
+        BDDMockito.given(memberService.join(any(MemberRequestDTO::class.java))).willThrow(IllegalArgumentException())
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/members")
@@ -90,7 +97,7 @@ class MemberControllerTest {
     fun `회원가입 시 중복이 발생지 않으면 201 Create 반환`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
         val body = ObjectMapper().writeValueAsString(memberRequestDTO)
-        BDDMockito.given(memberService.join(ArgumentMatchers.any())).willReturn(1L)
+        BDDMockito.given(memberService.join(any(MemberRequestDTO::class.java))).willReturn(1L)
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/members")
@@ -136,7 +143,7 @@ class MemberControllerTest {
         val body = ObjectMapper().writeValueAsString(memberLoginRequestDTO)
         val token = "header.payload.verifySignature"
         val loginResult = true
-        BDDMockito.given(memberService.login(ArgumentMatchers.any())).willReturn(loginResult)
+        BDDMockito.given(memberService.login(any(MemberLoginRequestDTO::class.java))).willReturn(loginResult)
         BDDMockito.given(jwtService.create(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
             .willReturn(token)
 
@@ -177,7 +184,7 @@ class MemberControllerTest {
             password = "123456789"
         )
         val body = ObjectMapper().writeValueAsString(memberLoginRequestDTO)
-        BDDMockito.given(memberService.login(ArgumentMatchers.any())).willThrow(IllegalStateException())
+        BDDMockito.given(memberService.login(any(MemberLoginRequestDTO::class.java))).willThrow(IllegalStateException())
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/members/login")
@@ -193,7 +200,7 @@ class MemberControllerTest {
     @Test
     fun `회원 단건 조회 성공시 200 OK 반환`() {
         val memberResponseDTO = TestFixture.memberResponseDTO()
-        BDDMockito.given(memberService.findByUserID(ArgumentMatchers.any())).willReturn(memberResponseDTO)
+        BDDMockito.given(memberService.findByUserID(ArgumentMatchers.anyString())).willReturn(memberResponseDTO)
 
         val resultActions =
             mvc.perform(RestDocumentationRequestBuilders.get("/members/{userid}", memberResponseDTO.userId))
@@ -227,11 +234,14 @@ class MemberControllerTest {
 
     @Test
     fun `회원 단건 조회 실패시 404 Not Found 반환`() {
-        BDDMockito.given(memberService.findByUserID(ArgumentMatchers.any())).willThrow(IllegalArgumentException())
+        BDDMockito.given(memberService.findByUserID(ArgumentMatchers.anyString())).willThrow(IllegalArgumentException())
 
         val resultActions = mvc.perform(MockMvcRequestBuilders.get("/members/" + "test"))
 
         resultActions.andExpect(MockMvcResultMatchers.status().isNotFound)
     }
+
+    private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
+
 
 }

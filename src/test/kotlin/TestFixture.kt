@@ -109,11 +109,10 @@ object TestFixture {
         userId: String = "junwooKim",
         password: String,
     ): MemberLoginRequestDTO {
-        return MemberLoginRequestDTO
-            .builder()
-            .userId(userId)
-            .password(password)
-            .build()
+        return MemberLoginRequestDTO(
+            userId = userId,
+            password = password,
+        )
     }
 
     fun memberRequestDTO(
