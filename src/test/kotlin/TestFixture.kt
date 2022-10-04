@@ -71,23 +71,22 @@ object TestFixture {
         val data: MutableList<BoardInfoDTO> = ArrayList()
         for (i in 1L..2L) {
             data.add(
-                BoardInfoDTO.builder()
-                    .id(i)
-                    .title("본문")
-                    .content("제목")
-                    .writer("작성자")
-                    .hits(i)
-                    .build()
+                BoardInfoDTO(
+                    id = i,
+                    title = "본문",
+                    content = "제목",
+                    writer = "작성자",
+                    hits = i,
+                )
             )
         }
-        return BoardPageResponseDTO
-            .builder()
-            .contents(data)
-            .totalPage(1)
-            .totalElements(2)
-            .curPage(1)
-            .size(10)
-            .build()
+        return BoardPageResponseDTO(
+            contents = data,
+            totalPage = 1,
+            totalElements = 2,
+            curPage = 1,
+            size = 10,
+        )
     }
 
     fun makeMember(): Member {
