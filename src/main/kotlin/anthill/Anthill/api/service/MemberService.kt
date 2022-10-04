@@ -39,15 +39,13 @@ class MemberService(
 
 
     fun login(memberLoginRequestDTO: MemberLoginRequestDTO): Boolean {
-        val user = memberRepository.findByUserId(memberLoginRequestDTO.userId)
-        val userPassword = user.orElseThrow { IllegalStateException() }
-            .password
+        val user = memberRepository.findByUserId(memberLoginRequestDTO.userId) ?: throw IllegalStateException()
+        val userPassword = user.password
         return BCrypt.checkpw(memberLoginRequestDTO.password, userPassword)
     }
 
     fun findByUserID(userId: String): MemberResponseDTO {
-        return memberRepository.findByUserId(userId)
-            .orElseThrow { IllegalArgumentException() }
-            .toMemberResponseDTO()
+        val member = memberRepository.findByUserId(userId) ?: throw IllegalArgumentException()
+        return member.toMemberResponseDTO()
     }
 }
