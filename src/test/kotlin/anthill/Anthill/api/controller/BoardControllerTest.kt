@@ -38,10 +38,13 @@ class BoardControllerTest {
     fun `게시글 작성 인증 실패`() {
         val boardRequestDTO = TestFixture.boardRequestDTO(1L)
         val body = ObjectMapper().writeValueAsString(boardRequestDTO)
+        val accessTokenHeader = "access-token"
+        val token = "header.payload.sign"
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/boards")
                 .content(body)
+                .header(accessTokenHeader, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
         )
@@ -159,12 +162,15 @@ class BoardControllerTest {
             savedBoardId = 1L,
             savedMemberId = 1L,
         )
+        val accessTokenHeader = "access-token"
+        val token = "header.payload.sign"
         val body = ObjectMapper().writeValueAsString(boardUpdateDTO)
         BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(false)
 
         val resultActions = mvc.perform(
             RestDocumentationRequestBuilders.put("/boards")
                 .content(body)
+                .header(accessTokenHeader, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
         )
