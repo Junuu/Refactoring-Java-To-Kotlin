@@ -7,7 +7,7 @@
 - [x] Repository 코틀린으로 변경
 - [x] Service 코틀린으로 변경
 - [x] DTO 코틀린으로 변경
-- [ ] 나머지 부분 코틀린으로 변경
+- [x] 나머지 부분 코틀린으로 변경
 - [ ] 멀티모듈을 도입하여 레이어 분리하기
 - [ ] 캐시 도입 (글로벌 캐시)
 - [ ] Github Action기반으로 CI/CD 도입 - ktlint, sonarqube
