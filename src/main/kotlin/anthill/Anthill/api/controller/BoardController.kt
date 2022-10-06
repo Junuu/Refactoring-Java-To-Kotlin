@@ -37,7 +37,7 @@ class BoardController(
 
     @PostMapping
     fun posting(@RequestBody boardRequestDTO: @Valid BoardRequestDTO): ResponseEntity<BasicResponseDTO<*>> {
-        boardService.posting(boardRequestDTO!!)
+        boardService.posting(boardRequestDTO)
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(makeBasicResponseDTO(SUCCESS))
     }

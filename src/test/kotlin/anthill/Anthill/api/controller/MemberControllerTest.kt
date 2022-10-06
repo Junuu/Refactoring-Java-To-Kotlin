@@ -80,7 +80,8 @@ class MemberControllerTest {
     fun `회원가입 시 중복이 발생한다면 404 not found 반환`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
         val body = ObjectMapper().writeValueAsString(memberRequestDTO)
-        BDDMockito.given(memberService.join(any(MemberRequestDTO::class.java))).willThrow(IllegalArgumentException())
+        BDDMockito.given(memberService.join(any(MemberRequestDTO::class.java)))
+            .willThrow(IllegalArgumentException())
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/members")

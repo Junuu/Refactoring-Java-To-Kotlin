@@ -23,7 +23,7 @@ class JwtService {
 
     fun isUsable(jwt: String): Boolean {
         return try {
-            val claims: Jws<Claims> = Jwts.parser()
+            Jwts.parser()
                 .setSigningKey(this.generateKey())
                 .parseClaimsJws(jwt)
             true
