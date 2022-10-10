@@ -1,1 +1,2 @@
-rootProject.name = "Anthill"
+rootProject.name = "root"
+include("member-external-api")

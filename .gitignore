@@ -1,4 +1,4 @@
 /build
 /.gradle
 /.idea
-/src/main/resources/static
+/member-external-api/src/main/resources/static
