@@ -51,15 +51,15 @@ val snippetsDir by extra {
 tasks {
     asciidoctor {
         dependsOn(test)
-        configurations("asciidoctorExt")
+        configurations("asciidoctorExtensions")
         inputs.dir(snippetsDir)
     }
-    register<Copy>("copyDocument") { // 4
+    register<Copy>("copyDocument") {
         dependsOn(asciidoctor)
         from(file("build/docs/asciidoc/index.html"))
         into(file("src/main/resources/static/docs"))
     }
     bootJar {
-        dependsOn("copyDocument") // 5
+        dependsOn("copyDocument")
     }
 }
