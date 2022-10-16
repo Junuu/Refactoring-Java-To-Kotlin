@@ -2,3 +2,4 @@
 /.gradle
 /.idea
 /member-external-api/src/main/resources/static
+**/build/**
