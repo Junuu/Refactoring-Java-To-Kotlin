@@ -1,10 +1,11 @@
 package anthill.Anthill.api.service
 
 import TestFixture
-import anthill.Anthill.db.domain.member.Address
-import anthill.Anthill.db.domain.member.Member
-import anthill.Anthill.db.repository.BoardRepository
-import anthill.Anthill.db.repository.MemberRepository
+import anthill.Anthill.domain.board.repository.BoardRepository
+import anthill.Anthill.domain.board.service.BoardService
+import anthill.Anthill.domain.member.entity.Address
+import anthill.Anthill.domain.member.entity.Member
+import anthill.Anthill.domain.member.repository.MemberRepository
 import org.apache.tomcat.websocket.AuthenticationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

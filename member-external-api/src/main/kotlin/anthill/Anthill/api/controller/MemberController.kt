@@ -1,10 +1,10 @@
 package anthill.Anthill.api.controller
 
 import anthill.Anthill.api.dto.common.BasicResponseDTO
-import anthill.Anthill.api.dto.member.MemberLoginRequestDTO
-import anthill.Anthill.api.dto.member.MemberRequestDTO
 import anthill.Anthill.api.service.JwtService
-import anthill.Anthill.api.service.MemberService
+import anthill.Anthill.domain.member.dto.MemberLoginRequestDTO
+import anthill.Anthill.domain.member.dto.MemberRequestDTO
+import anthill.Anthill.domain.member.service.MemberService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

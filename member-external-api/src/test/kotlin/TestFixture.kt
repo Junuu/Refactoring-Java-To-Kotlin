@@ -1,10 +1,10 @@
-import anthill.Anthill.api.dto.board.*
-import anthill.Anthill.api.dto.member.MemberLoginRequestDTO
-import anthill.Anthill.api.dto.member.MemberRequestDTO
-import anthill.Anthill.api.dto.member.MemberResponseDTO
-import anthill.Anthill.db.domain.board.Board
-import anthill.Anthill.db.domain.member.Address
-import anthill.Anthill.db.domain.member.Member
+import anthill.Anthill.domain.board.dto.*
+import anthill.Anthill.domain.board.entity.Board
+import anthill.Anthill.domain.member.dto.MemberLoginRequestDTO
+import anthill.Anthill.domain.member.dto.MemberRequestDTO
+import anthill.Anthill.domain.member.dto.MemberResponseDTO
+import anthill.Anthill.domain.member.entity.Address
+import anthill.Anthill.domain.member.entity.Member
 
 object TestFixture {
     fun makeBoard(): Board {

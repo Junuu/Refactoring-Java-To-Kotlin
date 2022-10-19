@@ -1,8 +1,8 @@
 package anthill.Anthill.api.controller
 
 import TestFixture
-import anthill.Anthill.api.service.BoardService
 import anthill.Anthill.api.service.JwtService
+import anthill.Anthill.domain.board.service.BoardService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers

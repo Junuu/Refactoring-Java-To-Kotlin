@@ -1,7 +1,8 @@
 package anthill.Anthill.api.service
 
 import TestFixture
-import anthill.Anthill.db.repository.MemberRepository
+import anthill.Anthill.domain.member.repository.MemberRepository
+import anthill.Anthill.domain.member.service.MemberService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

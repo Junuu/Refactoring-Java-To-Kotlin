@@ -1,10 +1,11 @@
 package anthill.Anthill.api.controller
 
-import anthill.Anthill.api.dto.board.BoardDeleteDTO
-import anthill.Anthill.api.dto.board.BoardRequestDTO
-import anthill.Anthill.api.dto.board.BoardUpdateDTO
+
 import anthill.Anthill.api.dto.common.BasicResponseDTO
-import anthill.Anthill.api.service.BoardService
+import anthill.Anthill.domain.board.dto.BoardDeleteDTO
+import anthill.Anthill.domain.board.dto.BoardRequestDTO
+import anthill.Anthill.domain.board.dto.BoardUpdateDTO
+import anthill.Anthill.domain.board.service.BoardService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

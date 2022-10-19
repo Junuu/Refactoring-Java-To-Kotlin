@@ -1,10 +1,10 @@
 package anthill.Anthill.api.controller
 
 import TestFixture
-import anthill.Anthill.api.dto.member.MemberLoginRequestDTO
-import anthill.Anthill.api.dto.member.MemberRequestDTO
 import anthill.Anthill.api.service.JwtService
-import anthill.Anthill.api.service.MemberService
+import anthill.Anthill.domain.member.dto.MemberLoginRequestDTO
+import anthill.Anthill.domain.member.dto.MemberRequestDTO
+import anthill.Anthill.domain.member.service.MemberService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
