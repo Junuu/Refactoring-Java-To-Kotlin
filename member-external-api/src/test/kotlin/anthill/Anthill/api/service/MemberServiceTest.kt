@@ -3,6 +3,7 @@ package anthill.Anthill.api.service
 import TestFixture
 import anthill.Anthill.domain.member.repository.MemberRepository
 import anthill.Anthill.domain.member.service.MemberService
+import anthill.Anthill.util.JwtUtil
 import anthill.Anthill.util.PasswordEncodingUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -16,11 +17,14 @@ class MemberServiceTest @Autowired constructor(
 ) {
     lateinit var memberService: MemberService
 
+    val jwtUtil = JwtUtil()
+
     @BeforeEach
     fun setup() {
         memberService = MemberService(
             memberRepository = memberRepository,
             passwordEncodingUtil = PasswordEncodingUtil(),
+            jwtUtil = jwtUtil,
         )
     }
 
@@ -61,7 +65,7 @@ class MemberServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `id, password가 올바르면 로그인에 true를 반환한다`() {
+    fun `id, password가 올바르면 로그인시 토큰을 반환한다`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
         memberService.join(memberRequestDTO)
         val memberLoginRequestDTO = TestFixture.memberLoginRequestDTO(
@@ -70,7 +74,7 @@ class MemberServiceTest @Autowired constructor(
 
         val result = memberService.login(memberLoginRequestDTO)
 
-        Assertions.assertTrue(result)
+        Assertions.assertTrue(jwtUtil.isUsable(result))
     }
 
     @Test
@@ -92,9 +96,9 @@ class MemberServiceTest @Autowired constructor(
             password = "wrongPassword"
         )
 
-        val result = memberService.login(memberLoginRequestDTO)
-
-        Assertions.assertFalse(result)
+        Assertions.assertThrows(IllegalStateException::class.java) {
+            memberService.login(memberLoginRequestDTO)
+        }
     }
 
     @Test

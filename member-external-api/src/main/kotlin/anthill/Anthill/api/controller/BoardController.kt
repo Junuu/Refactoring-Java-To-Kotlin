@@ -54,8 +54,8 @@ class BoardController(
 
     @DeleteMapping
     @Throws(Exception::class)
-    fun delete(@RequestBody boardDeleteDTO: BoardDeleteDTO?): ResponseEntity<BasicResponseDTO<*>> {
-        boardService.delete(boardDeleteDTO!!)
+    fun delete(@RequestBody boardDeleteDTO: BoardDeleteDTO): ResponseEntity<BasicResponseDTO<*>> {
+        boardService.delete(boardDeleteDTO)
         return ResponseEntity.status(HttpStatus.OK)
             .body(makeBasicResponseDTO(SUCCESS))
     }

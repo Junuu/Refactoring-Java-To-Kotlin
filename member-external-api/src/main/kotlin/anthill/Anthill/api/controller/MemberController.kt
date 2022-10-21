@@ -14,7 +14,6 @@ import javax.validation.Valid
 @RequestMapping("/members")
 class MemberController(
     val memberService: MemberService,
-    val jwtUtil: JwtUtil,
 ) {
     @GetMapping("/{userid}")
     fun findByUserId(@PathVariable(value = "userid") userId: String): ResponseEntity<*> {
@@ -41,17 +40,9 @@ class MemberController(
 
     @PostMapping("/login")
     fun loginMember(@RequestBody memberLoginRequestDTO: MemberLoginRequestDTO): ResponseEntity<BasicResponseDTO<*>> {
-        if (memberService.login(memberLoginRequestDTO)) {
-            val token = jwtUtil.create("userId", memberLoginRequestDTO.userId, "access-token")
-            return ResponseEntity.status(HttpStatus.OK)
-                .header("access-token", token)
-                .body(
-                    makeBasicResponseDTO<Any>(
-                        message = FAIL,
-                    )
-                )
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        val token = memberService.login(memberLoginRequestDTO)
+        return ResponseEntity.status(HttpStatus.OK)
+            .header("access-token", token)
             .body(
                 makeBasicResponseDTO<Any>(
                     message = FAIL,

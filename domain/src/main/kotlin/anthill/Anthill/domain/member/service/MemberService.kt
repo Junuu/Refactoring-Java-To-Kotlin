@@ -4,16 +4,19 @@ import anthill.Anthill.domain.member.dto.MemberLoginRequestDTO
 import anthill.Anthill.domain.member.dto.MemberRequestDTO
 import anthill.Anthill.domain.member.dto.MemberResponseDTO
 import anthill.Anthill.domain.member.repository.MemberRepository
+import anthill.Anthill.util.JwtUtil
 import anthill.Anthill.util.PasswordEncodingUtil
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.client.HttpClientErrorException.Unauthorized
 
 @Service
 @Transactional
 class MemberService(
     val memberRepository: MemberRepository,
     val passwordEncodingUtil: PasswordEncodingUtil,
+    val jwtUtil: JwtUtil,
 ) {
     fun join(memberRequestDTO: MemberRequestDTO): Long {
         validateIsDuplicate(memberRequestDTO)
@@ -41,10 +44,15 @@ class MemberService(
     }
 
 
-    fun login(memberLoginRequestDTO: MemberLoginRequestDTO): Boolean {
+    fun login(memberLoginRequestDTO: MemberLoginRequestDTO): String {
         val savedUser = memberRepository.findByUserId(memberLoginRequestDTO.userId) ?: throw IllegalStateException()
         val savedPassword = savedUser.password
-        return passwordEncodingUtil.checkPassword(memberLoginRequestDTO.password, savedPassword)
+        val result = passwordEncodingUtil.checkPassword(memberLoginRequestDTO.password, savedPassword)
+        if(result == false){
+            throw IllegalStateException()
+        }
+        val token = jwtUtil.create("userId", memberLoginRequestDTO.userId, "access-token")
+        return token
     }
 
     fun findByUserID(userId: String): MemberResponseDTO {

@@ -143,10 +143,7 @@ class MemberControllerTest {
         )
         val body = ObjectMapper().writeValueAsString(memberLoginRequestDTO)
         val token = "header.payload.verifySignature"
-        val loginResult = true
-        BDDMockito.given(memberService.login(any(MemberLoginRequestDTO::class.java))).willReturn(loginResult)
-        BDDMockito.given(jwtUtil.create(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
-            .willReturn(token)
+        BDDMockito.given(memberService.login(any(MemberLoginRequestDTO::class.java))).willReturn(token)
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/members/login")
