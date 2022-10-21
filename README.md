@@ -8,11 +8,12 @@
 - [x] Service 코틀린으로 변경
 - [x] DTO 코틀린으로 변경
 - [x] 나머지 부분 코틀린으로 변경
-- [ ] 멀티모듈을 도입하여 레이어 분리하기
-- [ ] 캐시 도입 (글로벌 캐시)
-- [ ] Github Action기반으로 CI/CD 도입 - ktlint, sonarqube
+- [x] 멀티모듈을 도입하여 레이어 분리하기
+- [ ] Command Query, Service Query 분리하기
 - [ ] 부하 테스트 및 모니터링
 - [ ] MySQL Master-Slave 구조 만들어보기(또는 DB를 Mysql대신 PostgresSQL으로 마이그레이션)
+- [ ] 캐시 도입 (글로벌 캐시)
+- [ ] Github Action기반으로 CI/CD 도입 - ktlint, sonarqube
 - [ ] 선착순 이벤트처럼 순간 많은 접속자가 들어온 상황 재현해서 Message Queue로 해결해보기
 - [ ] Blue/Green 배포 및 오토 스케일링으로 트래픽에 따른 서버 조절 (쿠버네티스, nginx, 로드밸런싱 필요할 것 같음)
 - [ ] 검색을 위한 Elastic Search 도입해보기
