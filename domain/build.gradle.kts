@@ -13,6 +13,7 @@ allOpen {
 
 dependencies {
   implementation(project(":infra-rds"))
+  implementation(project(":util"))
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 

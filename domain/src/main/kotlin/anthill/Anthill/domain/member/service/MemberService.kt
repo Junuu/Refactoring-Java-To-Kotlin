@@ -4,6 +4,7 @@ import anthill.Anthill.domain.member.dto.MemberLoginRequestDTO
 import anthill.Anthill.domain.member.dto.MemberRequestDTO
 import anthill.Anthill.domain.member.dto.MemberResponseDTO
 import anthill.Anthill.domain.member.repository.MemberRepository
+import anthill.Anthill.util.PasswordEncodingUtil
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class MemberService(
     val memberRepository: MemberRepository,
+    val passwordEncodingUtil: PasswordEncodingUtil,
 ) {
     fun join(memberRequestDTO: MemberRequestDTO): Long {
         validateIsDuplicate(memberRequestDTO)
-        memberRequestDTO.hashingPassword()
+        val hashedPassword = passwordEncodingUtil.hashingPassword(memberRequestDTO.password)
+        memberRequestDTO.setEncodedPassword(hashedPassword)
         return memberRepository.save(memberRequestDTO.toEntity()).id
     }
 
@@ -39,9 +42,9 @@ class MemberService(
 
 
     fun login(memberLoginRequestDTO: MemberLoginRequestDTO): Boolean {
-        val user = memberRepository.findByUserId(memberLoginRequestDTO.userId) ?: throw IllegalStateException()
-        val userPassword = user.password
-        return BCrypt.checkpw(memberLoginRequestDTO.password, userPassword)
+        val savedUser = memberRepository.findByUserId(memberLoginRequestDTO.userId) ?: throw IllegalStateException()
+        val savedPassword = savedUser.password
+        return passwordEncodingUtil.checkPassword(memberLoginRequestDTO.password, savedPassword)
     }
 
     fun findByUserID(userId: String): MemberResponseDTO {
@@ -53,6 +56,5 @@ class MemberService(
             phoneNumber = member.phoneNumber,
             address = member.address,
         )
-
     }
 }

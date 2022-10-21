@@ -1,14 +1,14 @@
-package anthill.Anthill.api.service
+package anthill.Anthill.util
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.io.UnsupportedEncodingException
 import java.util.*
 
 
-@Service
-class JwtService {
+@Component
+class JwtUtil {
     fun create(key: String, data: String, subject: String): String {
         return Jwts.builder()
             .setHeaderParam("typ", "JWT")

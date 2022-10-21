@@ -3,6 +3,7 @@ package anthill.Anthill.api.service
 import TestFixture
 import anthill.Anthill.domain.member.repository.MemberRepository
 import anthill.Anthill.domain.member.service.MemberService
+import anthill.Anthill.util.PasswordEncodingUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,6 +20,7 @@ class MemberServiceTest @Autowired constructor(
     fun setup() {
         memberService = MemberService(
             memberRepository = memberRepository,
+            passwordEncodingUtil = PasswordEncodingUtil(),
         )
     }
 

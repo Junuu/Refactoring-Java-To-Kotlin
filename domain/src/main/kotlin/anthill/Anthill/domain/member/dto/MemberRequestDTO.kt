@@ -3,7 +3,6 @@ package anthill.Anthill.domain.member.dto
 
 import anthill.Anthill.domain.member.entity.Address
 import anthill.Anthill.domain.member.entity.Member
-import org.mindrot.jbcrypt.BCrypt
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
@@ -30,8 +29,9 @@ data class MemberRequestDTO(
 
     val address: Address,
 ) {
-    fun hashingPassword() {
-        password = BCrypt.hashpw(password, BCrypt.gensalt())
+
+    fun setEncodedPassword(encodedPassword: String) {
+        this.password = encodedPassword
     }
 
     fun toEntity(): Member {

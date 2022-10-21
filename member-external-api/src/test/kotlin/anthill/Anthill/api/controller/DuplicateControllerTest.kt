@@ -1,7 +1,7 @@
 package anthill.Anthill.api.controller
 
-import anthill.Anthill.api.service.JwtService
 import anthill.Anthill.domain.member.service.MemberService
+import anthill.Anthill.util.JwtUtil
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +23,7 @@ class DuplicateControllerTest {
     lateinit var mvc: MockMvc
 
     @MockBean
-    lateinit var jwtService: JwtService
+    lateinit var jwtUtil: JwtUtil
 
     @MockBean
     lateinit var memberService: MemberService

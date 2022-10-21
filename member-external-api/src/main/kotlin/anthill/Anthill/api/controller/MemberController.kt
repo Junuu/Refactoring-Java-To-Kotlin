@@ -1,10 +1,10 @@
 package anthill.Anthill.api.controller
 
 import anthill.Anthill.api.dto.common.BasicResponseDTO
-import anthill.Anthill.api.service.JwtService
 import anthill.Anthill.domain.member.dto.MemberLoginRequestDTO
 import anthill.Anthill.domain.member.dto.MemberRequestDTO
 import anthill.Anthill.domain.member.service.MemberService
+import anthill.Anthill.util.JwtUtil
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -14,7 +14,7 @@ import javax.validation.Valid
 @RequestMapping("/members")
 class MemberController(
     val memberService: MemberService,
-    val jwtService: JwtService,
+    val jwtUtil: JwtUtil,
 ) {
     @GetMapping("/{userid}")
     fun findByUserId(@PathVariable(value = "userid") userId: String): ResponseEntity<*> {
@@ -42,7 +42,7 @@ class MemberController(
     @PostMapping("/login")
     fun loginMember(@RequestBody memberLoginRequestDTO: MemberLoginRequestDTO): ResponseEntity<BasicResponseDTO<*>> {
         if (memberService.login(memberLoginRequestDTO)) {
-            val token = jwtService.create("userId", memberLoginRequestDTO.userId, "access-token")
+            val token = jwtUtil.create("userId", memberLoginRequestDTO.userId, "access-token")
             return ResponseEntity.status(HttpStatus.OK)
                 .header("access-token", token)
                 .body(

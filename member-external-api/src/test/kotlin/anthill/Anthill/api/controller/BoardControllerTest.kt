@@ -1,8 +1,8 @@
 package anthill.Anthill.api.controller
 
 import TestFixture
-import anthill.Anthill.api.service.JwtService
 import anthill.Anthill.domain.board.service.BoardService
+import anthill.Anthill.util.JwtUtil
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
@@ -32,7 +32,7 @@ class BoardControllerTest {
     lateinit var boardService: BoardService
 
     @MockBean
-    lateinit var jwtService: JwtService
+    lateinit var jwtUtil: JwtUtil
 
     @Test
     fun `게시글 작성 인증 실패`() {
@@ -58,7 +58,7 @@ class BoardControllerTest {
         val token = "header.payload.sign"
         val accessTokenHeader = "access-token"
         val body = ObjectMapper().writeValueAsString(boardRequestDTO)
-        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(true)
+        BDDMockito.given(jwtUtil.isUsable(ArgumentMatchers.anyString())).willReturn(true)
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/boards")
@@ -165,7 +165,7 @@ class BoardControllerTest {
         val accessTokenHeader = "access-token"
         val token = "header.payload.sign"
         val body = ObjectMapper().writeValueAsString(boardUpdateDTO)
-        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(false)
+        BDDMockito.given(jwtUtil.isUsable(ArgumentMatchers.anyString())).willReturn(false)
 
         val resultActions = mvc.perform(
             RestDocumentationRequestBuilders.put("/boards")
@@ -187,7 +187,7 @@ class BoardControllerTest {
         val token = "header.payload.sign"
         val accessTokenHeader = "access-token"
         val body = ObjectMapper().writeValueAsString(boardUpdateDTO)
-        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(true)
+        BDDMockito.given(jwtUtil.isUsable(ArgumentMatchers.anyString())).willReturn(true)
 
         val resultActions = mvc.perform(
             RestDocumentationRequestBuilders.put("/boards")
@@ -231,7 +231,7 @@ class BoardControllerTest {
         val token = "header.payload.sign"
         val accessTokenHeader = "access-token"
         val body = ObjectMapper().writeValueAsString(boardDeleteDTO)
-        BDDMockito.given(jwtService.isUsable(ArgumentMatchers.anyString())).willReturn(true)
+        BDDMockito.given(jwtUtil.isUsable(ArgumentMatchers.anyString())).willReturn(true)
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.delete("/boards")
