@@ -6,6 +6,7 @@ import anthill.Anthill.domain.board.service.BoardService
 import anthill.Anthill.domain.member.entity.Address
 import anthill.Anthill.domain.member.entity.Member
 import anthill.Anthill.domain.member.repository.MemberRepository
+import kotlinx.coroutines.*
 import org.apache.tomcat.websocket.AuthenticationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
+import kotlin.system.measureTimeMillis
 
 
 @DataJpaTest
@@ -245,37 +247,29 @@ class BoardServiceTest @Autowired constructor(
         Assertions.assertEquals(result.hits, 1)
     }
 
-//    @Test
-//    fun `게시글 조회수를 증가시킬 때 데이터 동시성이 지켜진다`(){
-//        val savedMemberId = saveMember()
-//        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
-//        entityManager.flush()
-//
-//        //100*1000만회
-//        runBlocking {
-//            GlobalScope.massiveRun {
-//                boardService.updateHitByBoardId(savedBoardId)
-//            }
-//        }
-//        entityManager.flush()
-//        val result = boardService.select(savedBoardId)
-//
-//        Assertions.assertEquals(result.hits, 100*1000)
-//    }
-//
-//    suspend fun CoroutineScope.massiveRun(action: suspend () -> Unit) {
-//        val n = 100  // number of coroutines to launch
-//        val k = 1000 // times an action is repeated by each coroutine
-//        val time = measureTimeMillis {
-//            val jobs = List(n) {
-//                launch {
-//                    repeat(k) { action() }
-//                }
-//            }
-//            jobs.forEach { it.join() }
-//        }
-//        println("Completed ${n * k} actions in $time ms")
-//    }
+    @Test
+    fun `게시글 조회수를 증가시킬 때 데이터 동시성이 지켜진다`(){
+        val savedMemberId = saveMember()
+        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        entityManager.flush()
+
+        //100*1000만회
+        runBlocking {
+            repeat(1000) {
+                async { updateCall(savedBoardId) }
+            }
+        }
+        entityManager.flush()
+        entityManager.clear()
+        val result = boardService.select(savedBoardId)
+
+        Assertions.assertEquals(result.hits, 1000)
+    }
+
+    suspend fun updateCall(savedBoardId: Long){
+        boardService.updateHitByBoardId(savedBoardId)
+    }
+
 
     companion object {
         const val NOT_EXIST_ID = -1L
