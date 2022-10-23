@@ -9,7 +9,7 @@
 - [x] DTO 코틀린으로 변경
 - [x] 나머지 부분 코틀린으로 변경
 - [x] 멀티모듈을 도입하여 레이어 분리하기
-- [ ] Command Query, Service Query 분리하기
+- [x] (Command,Query) Service 분리하기
 - [ ] 부하 테스트 및 모니터링
 - [ ] MySQL Master-Slave 구조 만들어보기(또는 DB를 Mysql대신 PostgresSQL으로 마이그레이션)
 - [ ] 캐시 도입 (글로벌 캐시)
