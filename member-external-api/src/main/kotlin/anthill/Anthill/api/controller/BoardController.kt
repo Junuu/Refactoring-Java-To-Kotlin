@@ -5,7 +5,8 @@ import anthill.Anthill.api.dto.common.BasicResponseDTO
 import anthill.Anthill.domain.board.dto.BoardDeleteDTO
 import anthill.Anthill.domain.board.dto.BoardRequestDTO
 import anthill.Anthill.domain.board.dto.BoardUpdateDTO
-import anthill.Anthill.domain.board.service.BoardService
+import anthill.Anthill.domain.board.service.BoardCommandService
+import anthill.Anthill.domain.board.service.BoardQueryService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -14,12 +15,13 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/boards")
 class BoardController(
-    val boardService: BoardService,
+    val boardCommandService: BoardCommandService,
+    val boardQueryService: BoardQueryService,
 ) {
 
     @GetMapping("/{board-id}")
     fun select(@PathVariable("board-id") boardId: Long): ResponseEntity<BasicResponseDTO<*>> {
-        val boardResponseDTO = boardService.select(boardId)
+        val boardResponseDTO = boardQueryService.select(boardId)
         return ResponseEntity.status(HttpStatus.OK)
             .body(
                 makeSelectResponseDTO(
@@ -31,14 +33,14 @@ class BoardController(
 
     @GetMapping("/page/{paging-id}")
     fun paging(@PathVariable("paging-id") pagingId: Int): ResponseEntity<BasicResponseDTO<*>> {
-        val resultPage = boardService.paging(pagingId - 1)
+        val resultPage = boardQueryService.paging(pagingId - 1)
         return ResponseEntity.status(HttpStatus.OK)
             .body(makeSelectResponseDTO(SUCCESS, resultPage))
     }
 
     @PostMapping
     fun posting(@RequestBody boardRequestDTO: @Valid BoardRequestDTO): ResponseEntity<BasicResponseDTO<*>> {
-        boardService.posting(boardRequestDTO)
+        boardCommandService.posting(boardRequestDTO)
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(makeBasicResponseDTO(SUCCESS))
     }
@@ -46,7 +48,7 @@ class BoardController(
     @PutMapping
     @Throws(Exception::class)
     fun update(@RequestBody boardUpdateDTO: BoardUpdateDTO): ResponseEntity<BasicResponseDTO<*>> {
-        boardService.changeInfo(boardUpdateDTO)
+        boardCommandService.changeInfo(boardUpdateDTO)
         return ResponseEntity.status(HttpStatus.OK)
             .body(makeBasicResponseDTO(SUCCESS))
     }
@@ -55,7 +57,7 @@ class BoardController(
     @DeleteMapping
     @Throws(Exception::class)
     fun delete(@RequestBody boardDeleteDTO: BoardDeleteDTO): ResponseEntity<BasicResponseDTO<*>> {
-        boardService.delete(boardDeleteDTO)
+        boardCommandService.delete(boardDeleteDTO)
         return ResponseEntity.status(HttpStatus.OK)
             .body(makeBasicResponseDTO(SUCCESS))
     }

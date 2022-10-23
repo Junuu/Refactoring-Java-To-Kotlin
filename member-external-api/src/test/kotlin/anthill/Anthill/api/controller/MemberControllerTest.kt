@@ -3,7 +3,8 @@ package anthill.Anthill.api.controller
 import TestFixture
 import anthill.Anthill.domain.member.dto.MemberLoginRequestDTO
 import anthill.Anthill.domain.member.dto.MemberRequestDTO
-import anthill.Anthill.domain.member.service.MemberService
+import anthill.Anthill.domain.member.service.MemberCommandService
+import anthill.Anthill.domain.member.service.MemberQueryService
 import anthill.Anthill.util.JwtUtil
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
@@ -32,7 +33,10 @@ class MemberControllerTest {
     lateinit var mvc: MockMvc
 
     @MockBean
-    lateinit var memberService: MemberService
+    lateinit var memberQueryService: MemberQueryService
+
+    @MockBean
+    lateinit var memberCommandService: MemberCommandService
 
     @MockBean
     lateinit var jwtUtil: JwtUtil
@@ -80,7 +84,7 @@ class MemberControllerTest {
     fun `회원가입 시 중복이 발생한다면 404 not found 반환`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
         val body = ObjectMapper().writeValueAsString(memberRequestDTO)
-        BDDMockito.given(memberService.join(any(MemberRequestDTO::class.java)))
+        BDDMockito.given(memberCommandService.join(any(MemberRequestDTO::class.java)))
             .willThrow(IllegalArgumentException())
 
         val resultActions = mvc.perform(
@@ -98,7 +102,7 @@ class MemberControllerTest {
     fun `회원가입 시 중복이 발생지 않으면 201 Create 반환`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
         val body = ObjectMapper().writeValueAsString(memberRequestDTO)
-        BDDMockito.given(memberService.join(any(MemberRequestDTO::class.java))).willReturn(1L)
+        BDDMockito.given(memberCommandService.join(any(MemberRequestDTO::class.java))).willReturn(1L)
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/members")
@@ -143,7 +147,7 @@ class MemberControllerTest {
         )
         val body = ObjectMapper().writeValueAsString(memberLoginRequestDTO)
         val token = "header.payload.verifySignature"
-        BDDMockito.given(memberService.login(any(MemberLoginRequestDTO::class.java))).willReturn(token)
+        BDDMockito.given(memberCommandService.login(any(MemberLoginRequestDTO::class.java))).willReturn(token)
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/members/login")
@@ -182,7 +186,7 @@ class MemberControllerTest {
             password = "123456789"
         )
         val body = ObjectMapper().writeValueAsString(memberLoginRequestDTO)
-        BDDMockito.given(memberService.login(any(MemberLoginRequestDTO::class.java))).willThrow(IllegalStateException())
+        BDDMockito.given(memberCommandService.login(any(MemberLoginRequestDTO::class.java))).willThrow(IllegalStateException())
 
         val resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/members/login")
@@ -198,7 +202,7 @@ class MemberControllerTest {
     @Test
     fun `회원 단건 조회 성공시 200 OK 반환`() {
         val memberResponseDTO = TestFixture.memberResponseDTO()
-        BDDMockito.given(memberService.findByUserID(ArgumentMatchers.anyString())).willReturn(memberResponseDTO)
+        BDDMockito.given(memberQueryService.findByUserID(ArgumentMatchers.anyString())).willReturn(memberResponseDTO)
 
         val resultActions =
             mvc.perform(RestDocumentationRequestBuilders.get("/members/{userid}", memberResponseDTO.userId))
@@ -232,7 +236,7 @@ class MemberControllerTest {
 
     @Test
     fun `회원 단건 조회 실패시 404 Not Found 반환`() {
-        BDDMockito.given(memberService.findByUserID(ArgumentMatchers.anyString())).willThrow(IllegalArgumentException())
+        BDDMockito.given(memberQueryService.findByUserID(ArgumentMatchers.anyString())).willThrow(IllegalArgumentException())
 
         val resultActions = mvc.perform(MockMvcRequestBuilders.get("/members/" + "test"))
 

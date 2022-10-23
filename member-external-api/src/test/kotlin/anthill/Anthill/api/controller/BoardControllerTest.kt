@@ -1,7 +1,9 @@
 package anthill.Anthill.api.controller
 
 import TestFixture
-import anthill.Anthill.domain.board.service.BoardService
+import anthill.Anthill.domain.board.service.BoardCommandService
+import anthill.Anthill.domain.board.service.BoardQueryService
+
 import anthill.Anthill.util.JwtUtil
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
@@ -29,7 +31,10 @@ class BoardControllerTest {
     lateinit var mvc: MockMvc
 
     @MockBean
-    lateinit var boardService: BoardService
+    lateinit var boardQueryService: BoardQueryService
+
+    @MockBean
+    lateinit var boardCommandService: BoardCommandService
 
     @MockBean
     lateinit var jwtUtil: JwtUtil
@@ -96,7 +101,7 @@ class BoardControllerTest {
     fun `게시글 페이지 조회를 수행할 수 있다`() {
         val pagingId = 1
         val boardPagingDTO = TestFixture.boardPageResponseDTO()
-        BDDMockito.given(boardService.paging(ArgumentMatchers.any(Int::class.java))).willReturn(boardPagingDTO)
+        BDDMockito.given(boardQueryService.paging(ArgumentMatchers.any(Int::class.java))).willReturn(boardPagingDTO)
 
         val resultActions = mvc.perform(RestDocumentationRequestBuilders.get("/boards/page/{paging-id}", pagingId))
 
@@ -130,7 +135,7 @@ class BoardControllerTest {
     fun `게시글 단건 조회에 성공한다`() {
         val boardId = 1L
         val boardResponseDTO = TestFixture.boardResponseDTO()
-        BDDMockito.given(boardService.select(ArgumentMatchers.anyLong())).willReturn(boardResponseDTO)
+        BDDMockito.given(boardQueryService.select(ArgumentMatchers.anyLong())).willReturn(boardResponseDTO)
 
         val resultActions = mvc.perform(RestDocumentationRequestBuilders.get("/boards/{boardid}", boardId))
 

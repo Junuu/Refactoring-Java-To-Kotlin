@@ -3,8 +3,8 @@ package anthill.Anthill.api.controller
 import anthill.Anthill.api.dto.common.BasicResponseDTO
 import anthill.Anthill.domain.member.dto.MemberLoginRequestDTO
 import anthill.Anthill.domain.member.dto.MemberRequestDTO
-import anthill.Anthill.domain.member.service.MemberService
-import anthill.Anthill.util.JwtUtil
+import anthill.Anthill.domain.member.service.MemberCommandService
+import anthill.Anthill.domain.member.service.MemberQueryService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,11 +13,12 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/members")
 class MemberController(
-    val memberService: MemberService,
+    val memberQueryService: MemberQueryService,
+    val memberCommandService: MemberCommandService,
 ) {
     @GetMapping("/{userid}")
     fun findByUserId(@PathVariable(value = "userid") userId: String): ResponseEntity<*> {
-        val memberResponseDTO = memberService.findByUserID(userId)
+        val memberResponseDTO = memberQueryService.findByUserID(userId)
         return ResponseEntity.status(HttpStatus.OK)
             .body(
                 makeBasicResponseDTO(
@@ -29,7 +30,7 @@ class MemberController(
 
     @PostMapping
     fun registerMember(@RequestBody @Valid memberRequestDTO: MemberRequestDTO): ResponseEntity<BasicResponseDTO<*>> {
-        memberService.join(memberRequestDTO)
+        memberCommandService.join(memberRequestDTO)
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(
                 makeBasicResponseDTO<Any>(
@@ -40,7 +41,7 @@ class MemberController(
 
     @PostMapping("/login")
     fun loginMember(@RequestBody memberLoginRequestDTO: MemberLoginRequestDTO): ResponseEntity<BasicResponseDTO<*>> {
-        val token = memberService.login(memberLoginRequestDTO)
+        val token = memberCommandService.login(memberLoginRequestDTO)
         return ResponseEntity.status(HttpStatus.OK)
             .header("access-token", token)
             .body(

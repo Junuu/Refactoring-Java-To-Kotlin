@@ -2,7 +2,8 @@ package anthill.Anthill.api.service
 
 import TestFixture
 import anthill.Anthill.domain.board.repository.BoardRepository
-import anthill.Anthill.domain.board.service.BoardService
+import anthill.Anthill.domain.board.service.BoardCommandService
+import anthill.Anthill.domain.board.service.BoardQueryService
 import anthill.Anthill.domain.member.entity.Address
 import anthill.Anthill.domain.member.entity.Member
 import anthill.Anthill.domain.member.repository.MemberRepository
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
-import kotlin.system.measureTimeMillis
 
 
 @DataJpaTest
@@ -25,16 +25,20 @@ class BoardServiceTest @Autowired constructor(
     val boardRepository: BoardRepository,
     val memberRepository: MemberRepository,
 ) {
-    private lateinit var boardService: BoardService
+    private lateinit var boardCommandService: BoardCommandService
+    private lateinit var boardQueryService: BoardQueryService
 
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 
     @BeforeEach
     fun setUp() {
-        boardService = BoardService(
+        boardCommandService = BoardCommandService(
             boardRepository = boardRepository,
             memberRepository = memberRepository,
+        )
+        boardQueryService = BoardQueryService(
+            boardRepository = boardRepository,
         )
     }
 
@@ -66,7 +70,7 @@ class BoardServiceTest @Autowired constructor(
             savedMemberId = savedMemberId,
         )
 
-        val savedBoardId = boardService.posting(boardRequestDTO)
+        val savedBoardId = boardCommandService.posting(boardRequestDTO)
         val savedBoard = boardRepository.findById(savedBoardId).get()
 
         Assertions.assertNotNull(savedBoard)
@@ -83,14 +87,14 @@ class BoardServiceTest @Autowired constructor(
         )
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            boardService.posting(boardRequestDTO)
+            boardCommandService.posting(boardRequestDTO)
         }
     }
 
     @Test
     fun `게시글의 제목,정보를 변경할 수 있다`() {
         val savedMemberId = saveMember()
-        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val savedBoardId = boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
         val boardUpdateDTO = TestFixture.boardUpdateDTO(
             savedBoardId = savedBoardId,
             savedMemberId = savedMemberId,
@@ -98,7 +102,7 @@ class BoardServiceTest @Autowired constructor(
         val userInputUpdateTitle = "userInputUpdateTitle"
         val userInputUpdateContent = "userInputUpdateContent"
 
-        boardService.changeInfo(boardUpdateDTO)
+        boardCommandService.changeInfo(boardUpdateDTO)
         entityManager.flush()
         entityManager.clear()
         val result = boardRepository.findAll()[0]
@@ -116,14 +120,14 @@ class BoardServiceTest @Autowired constructor(
         )
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            boardService.changeInfo(boardUpdateDTO)
+            boardCommandService.changeInfo(boardUpdateDTO)
         }
     }
 
     @Test
     fun `게시글을 쓴사람의 id와 변경하는 사람의 id가 다른경우 AuthenticationException 발생`() {
         val savedMemberId = saveMember()
-        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val savedBoardId = boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
         val boardUpdateDTO = TestFixture.boardUpdateDTO(
             savedBoardId = savedBoardId,
             savedMemberId = NOT_EXIST_ID,
@@ -131,7 +135,7 @@ class BoardServiceTest @Autowired constructor(
         entityManager.flush()
 
         Assertions.assertThrows(AuthenticationException::class.java) {
-            boardService.changeInfo(boardUpdateDTO)
+            boardCommandService.changeInfo(boardUpdateDTO)
         }
     }
 
@@ -143,34 +147,34 @@ class BoardServiceTest @Autowired constructor(
         )
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            boardService.delete(boardDeleteDTO)
+            boardCommandService.delete(boardDeleteDTO)
         }
     }
 
     @Test
     fun `게시글을 삭제하려고 하는데 삭제 권한이 없으면 AuthenticationException 발생`() {
         val savedMemberId = saveMember()
-        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val savedBoardId = boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
         val boardDeleteDTO = TestFixture.boardDeleteDTO(
             savedBoardId = savedBoardId,
             savedMemberId = NOT_EXIST_ID,
         )
 
         Assertions.assertThrows(AuthenticationException::class.java) {
-            boardService.delete(boardDeleteDTO)
+            boardCommandService.delete(boardDeleteDTO)
         }
     }
 
     @Test
     fun `게시글을 생성하고 삭제`() {
         val savedMemberId = saveMember()
-        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val savedBoardId = boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
         val boardDeleteDTO = TestFixture.boardDeleteDTO(
             savedBoardId = savedBoardId,
             savedMemberId = savedMemberId,
         )
 
-        boardService.delete(boardDeleteDTO)
+        boardCommandService.delete(boardDeleteDTO)
 
         val repositoryDataCount = boardRepository.findAll().size
         Assertions.assertEquals(repositoryDataCount, 0)
@@ -180,10 +184,10 @@ class BoardServiceTest @Autowired constructor(
     @ValueSource(ints = [-100, -1, 100])
     fun `음수 또는 페이지 크기보다 큰 index를 넣으면 IllegalArgumentException 발생`(input: Int) {
         val savedMemberId = saveMember()
-        boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            boardService.paging(input)
+            boardQueryService.paging(input)
         }
     }
 
@@ -191,11 +195,11 @@ class BoardServiceTest @Autowired constructor(
     fun `0~페이지 크기보다 작은 범위의 index를 넣으면 페이징 조회에 성공한다`() {
         val savedMemberId = saveMember()
         repeat(43) {
-            boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+            boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
         }
 
-        val firstPaging = boardService.paging(0)
-        val lastPaging = boardService.paging(4)
+        val firstPaging = boardQueryService.paging(0)
+        val lastPaging = boardQueryService.paging(4)
 
         Assertions.assertEquals(10, firstPaging.contents.size)
         Assertions.assertEquals(3, lastPaging.contents.size)
@@ -204,10 +208,10 @@ class BoardServiceTest @Autowired constructor(
     @Test
     fun `페이지된 상세페이지를 조회할 수 있다`() {
         val savedMemberId = saveMember()
-        boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
         val userInputTitle = "userInputTitle"
 
-        val pagingResult = boardService.paging(0)
+        val pagingResult = boardQueryService.paging(0)
 
         Assertions.assertEquals(pagingResult.size, 10)
         Assertions.assertEquals(pagingResult.totalPage, 1)
@@ -220,9 +224,9 @@ class BoardServiceTest @Autowired constructor(
     @Test
     fun `단일 게시글을 조회할 수 있다`() {
         val savedMemberId = saveMember()
-        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val savedBoardId = boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
 
-        val result = boardService.select(savedBoardId)
+        val result = boardQueryService.select(savedBoardId)
 
         Assertions.assertEquals(result.id, savedBoardId)
     }
@@ -230,19 +234,19 @@ class BoardServiceTest @Autowired constructor(
     @Test
     fun `단일 게시글을 조회할 때 존재하지 않으면 IllegalArgumentException 발생`() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            boardService.select(NOT_EXIST_ID)
+            boardQueryService.select(NOT_EXIST_ID)
         }
     }
 
     @Test
     fun `게시글 조회수를 증가시킬 수 있다`() {
         val savedMemberId = saveMember()
-        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val savedBoardId = boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
 
-        boardService.updateHitByBoardId(savedBoardId)
+        boardCommandService.updateHitByBoardId(savedBoardId)
         entityManager.flush()
         entityManager.clear()
-        val result = boardService.select(savedBoardId)
+        val result = boardQueryService.select(savedBoardId)
 
         Assertions.assertEquals(result.hits, 1)
     }
@@ -250,7 +254,7 @@ class BoardServiceTest @Autowired constructor(
     @Test
     fun `게시글 조회수를 증가시킬 때 데이터 동시성이 지켜진다`(){
         val savedMemberId = saveMember()
-        val savedBoardId = boardService.posting(TestFixture.boardRequestDTO(savedMemberId))
+        val savedBoardId = boardCommandService.posting(TestFixture.boardRequestDTO(savedMemberId))
         entityManager.flush()
 
         //100*1000만회
@@ -261,13 +265,13 @@ class BoardServiceTest @Autowired constructor(
         }
         entityManager.flush()
         entityManager.clear()
-        val result = boardService.select(savedBoardId)
+        val result = boardQueryService.select(savedBoardId)
 
         Assertions.assertEquals(result.hits, 1000)
     }
 
     suspend fun updateCall(savedBoardId: Long){
-        boardService.updateHitByBoardId(savedBoardId)
+        boardCommandService.updateHitByBoardId(savedBoardId)
     }
 
 

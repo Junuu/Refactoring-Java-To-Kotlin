@@ -2,7 +2,8 @@ package anthill.Anthill.api.service
 
 import TestFixture
 import anthill.Anthill.domain.member.repository.MemberRepository
-import anthill.Anthill.domain.member.service.MemberService
+import anthill.Anthill.domain.member.service.MemberCommandService
+import anthill.Anthill.domain.member.service.MemberQueryService
 import anthill.Anthill.util.JwtUtil
 import anthill.Anthill.util.PasswordEncodingUtil
 import org.junit.jupiter.api.Assertions
@@ -15,16 +16,20 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 class MemberServiceTest @Autowired constructor(
     val memberRepository: MemberRepository,
 ) {
-    lateinit var memberService: MemberService
+    lateinit var memberQueryService: MemberQueryService
+    lateinit var memberCommandService: MemberCommandService
 
     val jwtUtil = JwtUtil()
 
     @BeforeEach
     fun setup() {
-        memberService = MemberService(
+        memberCommandService = MemberCommandService(
             memberRepository = memberRepository,
             passwordEncodingUtil = PasswordEncodingUtil(),
             jwtUtil = jwtUtil,
+        )
+        memberQueryService = MemberQueryService(
+            memberRepository = memberRepository,
         )
     }
 
@@ -33,7 +38,7 @@ class MemberServiceTest @Autowired constructor(
         val memberRequestDTO = TestFixture.memberRequestDTO()
         val originalPassword = memberRequestDTO.password
 
-        val savedMemberId = memberService.join(memberRequestDTO)
+        val savedMemberId = memberCommandService.join(memberRequestDTO)
 
         val result = memberRepository.findById(savedMemberId).orElseThrow()
         Assertions.assertEquals(result.id, savedMemberId)
@@ -43,21 +48,21 @@ class MemberServiceTest @Autowired constructor(
     @Test
     fun `회원 가입시 중복이 발생한다`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
-        memberService.join(memberRequestDTO)
+        memberCommandService.join(memberRequestDTO)
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            memberService.join(memberRequestDTO)
+            memberCommandService.join(memberRequestDTO)
         }
     }
 
     @Test
     fun `nickName, userId, phoneNumber이 중복되면 true를 반환한다`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
-        memberService.join(memberRequestDTO)
+        memberCommandService.join(memberRequestDTO)
 
-        val userIdDuplicateResult = memberService.checkUserIdDuplicate("junwooKim")
-        val nickNameDuplicateResult = memberService.checkNicknameDuplicate("junuuu")
-        val phoneNumberDuplicateResult = memberService.checkPhoneNumberDuplicate("01012345678")
+        val userIdDuplicateResult = memberQueryService.checkUserIdDuplicate("junwooKim")
+        val nickNameDuplicateResult = memberQueryService.checkNicknameDuplicate("junuuu")
+        val phoneNumberDuplicateResult = memberQueryService.checkPhoneNumberDuplicate("01012345678")
 
         Assertions.assertTrue(userIdDuplicateResult)
         Assertions.assertTrue(nickNameDuplicateResult)
@@ -67,12 +72,12 @@ class MemberServiceTest @Autowired constructor(
     @Test
     fun `id, password가 올바르면 로그인시 토큰을 반환한다`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
-        memberService.join(memberRequestDTO)
+        memberCommandService.join(memberRequestDTO)
         val memberLoginRequestDTO = TestFixture.memberLoginRequestDTO(
             password = "123456789"
         )
 
-        val result = memberService.login(memberLoginRequestDTO)
+        val result = memberCommandService.login(memberLoginRequestDTO)
 
         Assertions.assertTrue(jwtUtil.isUsable(result))
     }
@@ -84,20 +89,20 @@ class MemberServiceTest @Autowired constructor(
         )
 
         Assertions.assertThrows(IllegalStateException::class.java) {
-            memberService.login(memberLoginRequestDTO)
+            memberCommandService.login(memberLoginRequestDTO)
         }
     }
 
     @Test
     fun `id, password가 올바르지 않으면 로그인에 false를 반환한다`() {
         val memberRequestDTO = TestFixture.memberRequestDTO()
-        memberService.join(memberRequestDTO)
+        memberCommandService.join(memberRequestDTO)
         val memberLoginRequestDTO = TestFixture.memberLoginRequestDTO(
             password = "wrongPassword"
         )
 
         Assertions.assertThrows(IllegalStateException::class.java) {
-            memberService.login(memberLoginRequestDTO)
+            memberCommandService.login(memberLoginRequestDTO)
         }
     }
 
@@ -106,7 +111,7 @@ class MemberServiceTest @Autowired constructor(
         val NOT_EXIST_USERID = "NOT_EXIST_USERID"
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            memberService.findByUserID(NOT_EXIST_USERID)
+            memberQueryService.findByUserID(NOT_EXIST_USERID)
         }
     }
 
@@ -114,7 +119,7 @@ class MemberServiceTest @Autowired constructor(
     fun `userId가 존재하면 MemberResponseDTO가 반환된다`() {
         memberRepository.save(TestFixture.makeMember())
 
-        val result = memberService.findByUserID("userId")
+        val result = memberQueryService.findByUserID("userId")
 
         Assertions.assertEquals(result.userId, "userId")
         Assertions.assertEquals(result.name, "김준우")

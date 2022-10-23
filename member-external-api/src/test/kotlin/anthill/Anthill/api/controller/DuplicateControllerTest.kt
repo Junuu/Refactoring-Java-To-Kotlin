@@ -1,6 +1,6 @@
 package anthill.Anthill.api.controller
 
-import anthill.Anthill.domain.member.service.MemberService
+import anthill.Anthill.domain.member.service.MemberQueryService
 import anthill.Anthill.util.JwtUtil
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito
@@ -26,13 +26,13 @@ class DuplicateControllerTest {
     lateinit var jwtUtil: JwtUtil
 
     @MockBean
-    lateinit var memberService: MemberService
+    lateinit var memberQueryService: MemberQueryService
 
     @Test
     fun `닉네임이 중복되지 않는 경우 false를 반환한다`() {
         val result = false
         val nickName = "testNickName"
-        BDDMockito.given(memberService.checkNicknameDuplicate(nickName)).willReturn(result)
+        BDDMockito.given(memberQueryService.checkNicknameDuplicate(nickName)).willReturn(result)
 
         val resultActions = mvc.perform(RestDocumentationRequestBuilders.get("/user-nickname/{nickname}", nickName))
 
@@ -58,7 +58,7 @@ class DuplicateControllerTest {
     fun `닉네임이 중복되지 않는 경우 true를 반환한다`() {
         val result = true
         val nickName = "testNickName"
-        BDDMockito.given(memberService.checkNicknameDuplicate(nickName)).willReturn(result)
+        BDDMockito.given(memberQueryService.checkNicknameDuplicate(nickName)).willReturn(result)
 
         val resultActions = mvc.perform(RestDocumentationRequestBuilders.get("/user-nickname/{nickname}", nickName))
 
@@ -84,7 +84,7 @@ class DuplicateControllerTest {
     fun `아이디가 중복되는 경우 false를 반환한다`() {
         val result = false
         val userId = "testUserId"
-        BDDMockito.given(memberService.checkUserIdDuplicate(userId)).willReturn(result)
+        BDDMockito.given(memberQueryService.checkUserIdDuplicate(userId)).willReturn(result)
 
         val resultActions = mvc.perform(RestDocumentationRequestBuilders.get("/user-id/{userId}", userId))
 
@@ -110,7 +110,7 @@ class DuplicateControllerTest {
     fun `아이디가 중복되지 않는 경우 true를 반환한다`() {
         val result = true
         val userId = "testUserId"
-        BDDMockito.given(memberService.checkUserIdDuplicate(userId)).willReturn(result)
+        BDDMockito.given(memberQueryService.checkUserIdDuplicate(userId)).willReturn(result)
 
         val resultActions = mvc.perform(RestDocumentationRequestBuilders.get("/user-id/{userId}", userId))
 
@@ -136,7 +136,7 @@ class DuplicateControllerTest {
     fun `전화번호가 중복되는 경우 false를 반환한다`() {
         val result = false
         val phoneNumber = "01012345678"
-        BDDMockito.given(memberService.checkPhoneNumberDuplicate(phoneNumber)).willReturn(result)
+        BDDMockito.given(memberQueryService.checkPhoneNumberDuplicate(phoneNumber)).willReturn(result)
 
         val resultActions =
             mvc.perform(RestDocumentationRequestBuilders.get("/user-phone-number/{phone-number}", phoneNumber))
@@ -163,7 +163,7 @@ class DuplicateControllerTest {
     fun `전화번호가 중복되지 않는 경우 true를 반환한다`() {
         val result = true
         val phoneNumber = "01012345678"
-        BDDMockito.given(memberService.checkPhoneNumberDuplicate(phoneNumber)).willReturn(result)
+        BDDMockito.given(memberQueryService.checkPhoneNumberDuplicate(phoneNumber)).willReturn(result)
 
         val resultActions =
             mvc.perform(RestDocumentationRequestBuilders.get("/user-phone-number/{phone-number}", phoneNumber))
