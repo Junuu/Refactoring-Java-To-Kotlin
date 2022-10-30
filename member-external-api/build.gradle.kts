@@ -9,6 +9,7 @@ val asciidoctorExtensions by configurations.creating
 dependencies {
     implementation(project(":domain"))
     implementation(project(":util"))
+    implementation(project(":infra-rds"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
